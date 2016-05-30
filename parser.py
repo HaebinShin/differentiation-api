@@ -69,11 +69,12 @@ class Factor:
 		else:
 			self.factors.append(param)
 
+
 	def __str__(self):
-		return "%s" % (self.factors)
+		return "%s" % self.factors
 	
 	def __repr__(self):
-		return "%s" % (self.factors)
+		return "%s" % self.factors
 
 
 class Term:
@@ -85,26 +86,25 @@ class Term:
 			self.terms.append(factors[i+1])
 
 	def __str__(self):
-		return "%s" % (self.terms)
+		return "%s" % self.terms
 
 	def __repr__(self):
-		return "%s" % (self.terms)
+		return "%s" % self.terms
 
 
 class Expression:
 	def __init__(self, terms, ops):
 		self.expressions=[]
-		self.ops=[]
 		self.expressions.append(terms[0])
 		for i in range(len(ops)):
 			self.expressions.append(ops[i])
 			self.expressions.append(terms[i+1])
 
 	def __str__(self):
-		return "%s" % (self.expressions)
+		return "%s" % self.expressions
 
 	def __repr__(self):
-		return "%s" % (self.expressions)
+		return "%s" % self.expressions
 
 
 if __name__ == "__main__":
@@ -112,8 +112,11 @@ if __name__ == "__main__":
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
-	print tokens
+	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("x+y")
+#	print tokens
+#	print type(tokens)
 	p=Parser()
 	p.parse(tokens)
+	print type(p)
 	print p
