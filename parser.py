@@ -49,6 +49,12 @@ class Parser:
 		elif re.match("\d*\.\d+|\d+", now)!=None:
 			tokens.popFront()
 			return Factor(now, "number")
+		elif re.match("sin|cos|tan|log|exp", now)!=None:
+			tokens.popFront()
+			tokens.popFront()
+			exp = self.takeExpression(tokens)
+			tokens.popFront()
+			return Factor([now, '(', exp, ')'], "trigo")
 		else:
 			tokens.popFront()
 			return Factor(now, "symbol")
@@ -106,7 +112,7 @@ if __name__ == "__main__":
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	tokens=tker.tokenize("x*(y+2)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	print tokens
 	p=Parser()
 	p.parse(tokens)
