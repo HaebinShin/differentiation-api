@@ -3,6 +3,8 @@ import re
 class Parser:
 	def __init__(self):
 		self.tree=[]
+		self.variables=[]
+		self.functions=[]
 
 	def __str__(self):
 		return "%s" % self.tree
@@ -12,7 +14,7 @@ class Parser:
 	
 	def parse(self, tokens):
 		self.tree=self.takeExpression(tokens)
-		return self.tree
+		return Ast(self.tree, self.variables, self.functions)
 	
 	def takeExpression(self, tokens):
 		terms = []
@@ -40,7 +42,7 @@ class Parser:
 			tokens.popFront()
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
-			return Factor(['(',exp,')'],"paran")
+			return Factor(['(',exp,')'],"paranthesis")
 		elif now == '-':
 			tokens.popFront()
 			fac = tokens.front()
@@ -50,25 +52,34 @@ class Parser:
 			tokens.popFront()
 			return Factor(now, "number")
 		elif re.match("sin|cos|tan|log|exp", now)!=None:
+			self.functions.append(now)
 			tokens.popFront()
 			tokens.popFront()
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
-			return Factor([now, '(', exp, ')'], "trigo")
+			return Factor([now, '(', exp, ')'], "function")
 		else:
+			self.variables.append(now)
 			tokens.popFront()
-			return Factor(now, "symbol")
+			return Factor(now, "variable")
 
 	
 class Factor:
 	def __init__(self, param, typename):
 		self.factors=[]
 		if type(param)==list:
-			for i in param:
-				self.factors.append(i)
+			for i in range(len(param)):
+				if typename=="function" and i==0:
+					instruction={}
+					instruction[typename]=param[i]
+					self.factors.append(instruction)
+				else:
+					self.factors.append(param[i])
 		else:
-			self.factors.append(param)
-
+			#self.factors.append(param)
+			instruction={}
+			instruction[typename]=param
+			self.factors.append(instruction)
 
 	def __str__(self):
 		return "%s" % self.factors
@@ -106,6 +117,24 @@ class Expression:
 	def __repr__(self):
 		return "%s" % self.expressions
 
+class Ast:
+	def __init__(self, tree, variables, functions):
+		self.tree=tree
+		self.variables=variables
+		self.functions=functions
+
+	def __str__(self):
+		return "%s\n%s\n%s" % (self.tree, self.variables, self.functions)
+	
+	def getTree(self):
+		return self.tree
+
+	def getVariables(self):
+		return self.variables
+
+	def getFuctions(self):
+		return self.functions
+
 
 if __name__ == "__main__":
 
@@ -113,10 +142,11 @@ if __name__ == "__main__":
 
 	tker=Tokenizer()
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
-	tokens=tker.tokenize("x+y")
+	#tokens=tker.tokenize("x+y")
+	tokens=tker.tokenize("x+y+sin(x)")
+
 #	print tokens
 #	print type(tokens)
 	p=Parser()
-	p.parse(tokens)
-	print type(p)
-	print p
+	ast=p.parse(tokens)
+	print ast
