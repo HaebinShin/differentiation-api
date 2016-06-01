@@ -3,8 +3,8 @@ import re
 class Parser:
 	def __init__(self):
 		self.tree=[]
-		self.variables=[]
-		self.functions=[]
+		self.variables=set([])
+		self.functions=set([])
 
 	def __str__(self):
 		return "%s" % self.tree
@@ -52,14 +52,14 @@ class Parser:
 			tokens.popFront()
 			return Factor(now, "number")
 		elif re.match("sin|cos|tan|log|exp", now)!=None:
-			self.functions.append(now)
+			self.functions.add(now)
 			tokens.popFront()
 			tokens.popFront()
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
 			return Factor([now, '(', exp, ')'], "function")
 		else:
-			self.variables.append(now)
+			self.variables.add(now)
 			tokens.popFront()
 			return Factor(now, "variable")
 
@@ -124,16 +124,16 @@ class Ast:
 		self.functions=functions
 
 	def __str__(self):
-		return "%s\n%s\n%s" % (self.tree, self.variables, self.functions)
+		return "%s\n%s\n%s" % (self.getTree(), self.getVariables(), self.getFunctions())
 	
 	def getTree(self):
 		return self.tree
 
 	def getVariables(self):
-		return self.variables
+		return list(self.variables)
 
-	def getFuctions(self):
-		return self.functions
+	def getFunctions(self):
+		return list(self.functions)
 
 
 if __name__ == "__main__":
@@ -141,9 +141,9 @@ if __name__ == "__main__":
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+y")
-	tokens=tker.tokenize("x+y+sin(x)")
+	#tokens=tker.tokenize("x+y+sin(x)")
 
 #	print tokens
 #	print type(tokens)
