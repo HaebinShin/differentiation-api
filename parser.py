@@ -1,5 +1,5 @@
 import re
-
+from functions import *
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -43,7 +43,8 @@ class Parser:
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
 			#return Factor(['(',exp,')'],"paranthesis")
-			return exp	
+			#return exp	
+			return Paranthesis(exp)
 		elif now == '-':
 			tokens.popFront()
 			#fac = tokens.front()
@@ -55,21 +56,23 @@ class Parser:
 			tokens.popFront()
 			#return Factor(now, "number")
 			return Number(now)
-		elif re.match("sin|cos|tan|log|exp", now)!=None:
+		#elif re.match("sin|cos|tan|log|exp", now)!=None:
+		elif Function.isFunction(now)==True:
 			self.functions.add(now)
 			tokens.popFront()
 			tokens.popFront()
+			print tokens.front()
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
-			return Factor([now, '(', exp, ')'], "function")
+			#return Factor([now, '(', exp, ')'], "function")
+			print "exp : ", exp
+			return Function.determine(now, exp)
 		else:
 			self.variables.add(now)
 			tokens.popFront()
 			#return Factor(now, "variable")
 			return Variable(now)
 
-#class Function:
-#	def 
 
 class Variable:
 	def __init__(self, variable):
@@ -128,6 +131,22 @@ class Negative:
 	def setVariable(self, variable, value):
 		return self.factor.setVariable(variable, value)
 
+class Paranthesis:
+	def __init__(self, expression):
+		self.expression=expression
+
+	def getAnswer(self):
+		return self.expression.getAnswer()
+	
+	def __str__(self):
+		return "(%s)" % self.expression
+
+	def __repr__(self):
+		return "(%s)" % self.expression
+
+	def setVariable(self, variable, value):
+		return self.expression.setVariable(variable, value)
+
 class Factor:
 	def __init__(self, param, typename):
 		self.factors=[]
@@ -176,14 +195,16 @@ class Term:
 			if factor in ['*', '/']:
 				reduced+=str(factor)
 			else:
+				print "aa : ", factor
 				reduced+=str(factor.getAnswer())
+		print "term : ", eval(reduced)
 		return eval(reduced)
 
 	def setVariable(self, variable, value):
 		is_set=False
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				print factor
+				print "factor : ", factor
 				is_set |= factor.setVariable(variable, value)
 		return is_set
 
@@ -207,6 +228,7 @@ class Expression:
 			if term in ['+', '-']:
 				reduced+=str(term)
 			else:
+				print "asfd : ", term
 				reduced+=str(term.getAnswer())
 		return eval(reduced)
 
@@ -265,8 +287,8 @@ if __name__ == "__main__":
 
 	tker=Tokenizer()
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
-	tokens=tker.tokenize("1--(y*(x-z))")
-	#tokens=tker.tokenize("x+y+sin(x)")
+	#tokens=tker.tokenize("1--(y*(x-z))")
+	tokens=tker.tokenize("x+y+sin(x+sin(z))")
 
 #	print tokens
 #	print type(tokens)
