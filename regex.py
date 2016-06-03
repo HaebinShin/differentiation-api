@@ -5,9 +5,10 @@ class Regex:
 	__cos=re.compile("cos|cosine", re.I)
 	__tan=re.compile("tan|tangent", re.I)
 	__exp=re.compile("exp|exponential", re.I)
+	__pow=re.compile("pow|power", re.I)
 
 	@classmethod
-	def functions(cls):
+	def singleParamFunctions(cls):
 		 func=[]
 		 func.append(cls.__sin)
 		 func.append(cls.__cos)
@@ -15,6 +16,12 @@ class Regex:
 		 func.append(cls.__exp)
 		 return func
 
+	@classmethod
+	def doubleParamFunctions(cls):
+		 func=[]
+		 func.append(cls.__pow)
+		 return func
+	
 	@classmethod
 	def sin(cls):
 		return cls.__sin
@@ -30,3 +37,7 @@ class Regex:
 	@classmethod
 	def exp(cls):
 		return cls.__exp
+
+	@classmethod
+	def pow(cls):
+		return cls.__pow

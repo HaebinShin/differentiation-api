@@ -57,7 +57,7 @@ class Parser:
 			#return Factor(now, "number")
 			return Number(now)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
-		elif Function.isFunction(now)==True:
+		elif Function.isSingleParamFunction(now)==True:
 			self.functions.add(now)
 			tokens.popFront()
 			tokens.popFront()
@@ -65,8 +65,18 @@ class Parser:
 			exp = self.takeExpression(tokens)
 			tokens.popFront()
 			#return Factor([now, '(', exp, ')'], "function")
-			print "exp : ", exp
-			return Function.determine(now, exp)
+			return Function.determine(now, param=exp)
+		elif Function.isDoubleParamFunction(now)==True:
+			self.functions.add(now)
+			tokens.popFront()
+			tokens.popFront()	
+			print "tokens front : ", tokens.front()
+			exp1 = self.takeExpression(tokens)
+			tokens.popFront()
+			print "tokens front : ", tokens.front()
+			exp2 = self.takeExpression(tokens)
+			tokens.popFront()
+			return Function.determine(now, base=exp1, exponential=exp2)
 		else:
 			self.variables.add(now)
 			tokens.popFront()
@@ -91,7 +101,7 @@ class Variable:
 
 	def setVariable(self, variable, value):
 		if self.variable==variable:		
-			self.value=value
+			self.value=float(value)
 			return True
 		else:
 			return False
@@ -102,7 +112,7 @@ class Number:
 		
 
 	def getAnswer(self):
-		return eval(self.number)
+		return float(self.number)
 
 
 	def __str__(self):
@@ -177,6 +187,9 @@ class Factor:
 
 class Term:
 	def __init__(self, factors, ops):
+		self.factors=factors
+		self.ops=ops
+
 		self.terms=[]
 		self.terms.append(factors[0])
 		for i in range(len(ops)):
@@ -208,6 +221,25 @@ class Term:
 				is_set |= factor.setVariable(variable, value)
 		return is_set
 
+	def getDerivative(self):
+		deri_terms=[]
+		for i in range(len(self.factors)):
+			if i==0:
+				self.factors[i].getDerivate()
+			else:
+				self.factors[j]
+			for j in range(len(self.factors[1:])):
+				if self.ops[j]=='*':
+					if j+1==i:
+						self.factors[j+1].getDerivative()
+					else:
+						self.factors[j+1]
+				elif self.ops[j]=='/':
+					if j+1==i:
+						Pow(self.factors[j+1], Number(-1)).getDerivative()
+					else:
+						Pow(self.factors[j+1], Number(-1))
+
 class Expression:
 	def __init__(self, terms, ops):
 		self.expressions=[]
@@ -238,6 +270,14 @@ class Expression:
 			if term not in ['+', '-']:
 				is_set |= term.setVariable(variable, value)
 		return is_set
+
+	def getDerivative(self):
+		deri_expressions=[]
+		for term in self.expressions:
+			if term in ['+', '-']:
+				deri_expressions.append(term)
+			else:
+				deri_expressions.append(term.getDerivative())
 
 
 class Ast:
@@ -280,17 +320,22 @@ class Ast:
 		else:
 			return True
 
+	def getDerivative(self):
+		return self.tree.getDerivative()
+
 
 if __name__ == "__main__":
 
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+pow(x,z)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
-	tokens=tker.tokenize("x+y+sin(x+sin(z))")
-
-#	print tokens
+	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
+	#tokens=tker.tokenize("1+2+pow(x,y)")
+	#tokens=tker.tokenize("x*y/z")
+	
+	print tokens
 #	print type(tokens)
 	p=Parser()
 	ast = p.parse(tokens)
@@ -299,6 +344,8 @@ if __name__ == "__main__":
 	print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
 	print ast.getAnswer()
+
+	print ast.getDerivative()
 
 '''
 c = Calculator()
