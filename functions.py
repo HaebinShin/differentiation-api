@@ -1,5 +1,6 @@
 from math import sin, cos, tan, exp, log
 from regex import Regex
+from parser import *
 #import regex as Regex
 
 class Function:
@@ -67,8 +68,15 @@ class Sin(Function):
 		Function.__init__(self, name="sin", param=param)
 
 	def getAnswer(self):
-		print self.param
 		return sin(self.param.getAnswer())
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Cos(self.param))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Term(factors,ops)
 
 
 class Cos(Function):
@@ -78,6 +86,15 @@ class Cos(Function):
 	def getAnswer(self):
 		return cos(self.param.getAnswer())
 
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Number(-1))
+		ops.append('*')
+		factors.append(Sin(self.param))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Term(factors,ops)
 
 class Tan(Function):
 	def __init__(self, param):
@@ -104,3 +121,14 @@ class Pow(Function):
 
 	def setVariable(self, variable, value):
 		return (self.base.setVariable(variable, value) | self.exponential.setVariable(variable, value))
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Number(self.exponential.getAnswer()))
+		ops.append('*')
+		factors.append(Pow(self.base, Number(self.exponential.getAnswer())))
+		ops.append('*')
+		factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer()-1)))
+		return Term(factors, ops)
+		#return Term([Number(self.exponential.getAnswer()), Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer()-1))], ['*', '*'])
