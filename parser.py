@@ -110,15 +110,18 @@ class Variable:
 		else:
 			return False
 
-	def getDerivativeBy(self, by_variable=None):
+	def getDerivativeBy(self, by_variable):
 		if self.variable==by_variable:	
 			return Number(1)
 		else:
 			return Number(0)
 
+	def canonicalize(self):
+		return self.getAnswer()
+
 class Number:
 	def __init__(self, number):
-		self.number=float(number)
+		self.number=number
 		
 
 	def getAnswer(self):
@@ -137,8 +140,11 @@ class Number:
 	def setVariable(self, variable, value):
 		return False
 
-	def getDerivativeBy(self, by_variable=None):
-		return float(0)
+	def getDerivativeBy(self, by_variable):
+		return Number(0)
+
+	def canonicalize(self):
+		return self.getAnswer()
 
 
 class Negative:
@@ -146,13 +152,25 @@ class Negative:
 		self.factor=factor
 
 	def getAnswer(self):
-		return eval('-'+str(self.factor.getAnswer()))
+		#print self.factor
+		if self.factor.getAnswer()==None:
+			return None
+		else:
+			return eval('-'+repr(self.factor.getAnswer()))
 
 	def __str__(self):
-		return "-%s" % self.factor
+		if self.factor.getVariables()!=None:
+			return "-%s" % self.factor
+		else:
+			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
+			return "-%s" % self.factor
 
 	def __repr__(self):
-		return "-%s" % self.factor
+		if self.factor.getVariables()!=None:
+			return "-%s" % self.factor
+		else:
+			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
+			return "-%s" % self.factor
 
 	def getVariables(self):
 			return self.factor.getVariables()
@@ -160,8 +178,12 @@ class Negative:
 	def setVariable(self, variable, value):
 		return self.factor.setVariable(variable, value)
 
-	def getDerivateBy(self, by_variable=None):
-		return eval('-'+self.factor.getDerivativeBy(by_variable))
+	def getDerivativeBy(self, by_variable=None):
+		#return eval('-'+str(self.factor.getDerivativeBy(by_variable)))
+		return Negative(self.factor.getDerivativeBy(by_variable))
+
+	def canonicalize(self):
+		return self.factors.canonicalize()
 
 class Paranthesis:
 	def __init__(self, expression):
@@ -184,6 +206,9 @@ class Paranthesis:
 
 	def getDerivativeBy(self, by_variable):
 		return self.expression.getDerivativeBy(by_variable)
+
+	def canonicalize(self):
+		return self.expression.canonicalize()
 
 class Factor:
 	def __init__(self, param, typename):
@@ -220,9 +245,16 @@ class Term:
 
 		self.terms=[]
 		self.terms.append(factors[0])
-		for i in range(len(ops)):
-			self.terms.append(ops[i])
-			self.terms.append(factors[i+1])
+		if factors[0].getVariables()==None and eval(repr(factors[0]))==0:
+			self.terms=[Number(0)]
+		else:
+			for i in range(len(ops)):
+				if ops[i]=='*' and factors[i+1].getVariables()==None and eval(repr(factors[i+1]))==0:
+					self.terms=[Number(0)]
+					break
+				self.terms.append(ops[i])
+				self.terms.append(factors[i+1])
+
 
 	def __str__(self):
 		return "%s" % self.terms
@@ -245,6 +277,7 @@ class Term:
 		variables=set([])
 		for factor in self.terms:
 			if factor not in ['*', '/']:
+				print factor
 				var=factor.getVariables()
 				if var!=None:
 					for now in var:
@@ -286,6 +319,28 @@ class Term:
 		
 		#return Expression(deri_terms, deri_terms_ops)
 		return deri_terms, deri_terms_ops
+
+	def canonicalize(self):
+		string=""
+		for i in range(len(self.terms)):
+			if self.terms[i]=='*':
+				if self.terms[i-1].canonicalize()==1:
+					string+=self.terms[i+1].canonicalize()
+				elif self.terms[i+1].canonicalize()==1:
+					string+=self.terms[i-1].canonicalize()
+				elif self.terms[i+1].canonicalize()==0 or self.terms[i-1].canonicalize()==0:
+					string+=0
+			elif self.terms[i]=='/':
+				if self.terms[i+1].canonicalize()==1:
+					string+=self.terms[i-1].canonicalize()
+				elif self.terms[i-1].canonicalize()==0:
+					continue	
+			string+=self.terms[i-1].canonicalize()
+			string+=self.terms[i].canonicalize()
+			string+=self.terms[i+1].canonicalize()
+		return string
+
+			
 
 class Expression:
 	def __init__(self, terms, ops):
@@ -352,9 +407,11 @@ class Expression:
 			#print "deri term : ", deri_terms
 			#print "deri ops  : ", deri_ops
 		
-		deri_tree=Expression(deri_terms, deri_ops)
-		return deri_tree
-		#return Ast(deri_tree, ['asfd'])
+		return Expression(deri_terms, deri_ops)
+		#return deri_tree
+
+	def canonicalize(self):
+		pass	
 
 class Ast:
 	def __init__(self, expression, functions):
@@ -404,6 +461,7 @@ class Ast:
 		#else:
 		#return self.expression.getDerivativeBy(by_variable)
 		deri_expression=self.expression.getDerivativeBy(by_variable)
+		#print deri_expression
 		return Ast(deri_expression, ["adsf"])
 
 	def getGradient(self):
@@ -421,7 +479,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(x,y)")
-	tokens=tker.tokenize("x*y")
+	tokens=tker.tokenize("-x*-y*-z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 
 	
@@ -438,8 +496,9 @@ if __name__ == "__main__":
 
 	deri_ast = ast.getDerivativeBy('y')
 	print deri_ast
-	print deri_ast.setVariable("x", 22)
-	print deri_ast.setVariable("y", 9)
+	print deri_ast.setVariable("x", 2)
+	print deri_ast.setVariable("y", 3)
+	print deri_ast.setVariable("z", 4)
 	print deri_ast.getAnswer()
 
 '''
