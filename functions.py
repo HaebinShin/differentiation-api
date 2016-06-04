@@ -22,7 +22,13 @@ class Function:
 			return "%s(%s)" % (self.name, self.param)
 		else:
 			return "%s(%s,%s)" % (self.name, self.base, self.exponential)
-	
+
+	def getVariables(self):
+		if self.param!=None:
+			return self.param.getVariables()
+		else:
+			return self.base.getVariables()
+
 	def setVariable(self, variable, value):
 		return self.param.setVariable(variable, value)
 
