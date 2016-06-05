@@ -101,7 +101,7 @@ class Variable:
 		return self.value
 
 	def getVariables(self):
-		return str(self.variable)
+		return list(self.variable)
 
 	def setVariable(self, variable, value):
 		if self.variable==variable:		
@@ -135,7 +135,7 @@ class Number:
 		return "%s" % self.number
 
 	def getVariables(self):
-		return None
+		return list()
 
 	def setVariable(self, variable, value):
 		return False
@@ -245,18 +245,20 @@ class Term:
 
 		self.terms=[]
 		self.terms.append(factors[0])
-		if factors[0].getVariables()==None and eval(repr(factors[0]))==0:
+		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
 			self.terms=[Number(0)]
 		else:
 			for i in range(len(ops)):
-				if ops[i]=='*' and factors[i+1].getVariables()==None and eval(repr(factors[i+1]))==0:
+				if len(factors[i+1].getVariables())==0:
+					print factors[i+1].getAnswer()
+				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
 					self.terms=[Number(0)]
 					break
-				elif ops[i]=='*' and self.terms[-1].getVariables()==None and eval(repr(self.terms[-1]))==1:
+				elif ops[i]=='*' and len(self.terms[-1].getVariables())==0 and eval(repr(self.terms[-1].getAnswer()))==1:
 					self.terms.pop()
 					self.terms.append(factors[i+1])
 					continue
-				elif factors[i+1].getVariables()==None and eval(repr(factors[i+1]))==1:
+				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
 					continue
 				else:
 					self.terms.append(ops[i])
@@ -370,7 +372,6 @@ class Expression:
 		self.expressions=[]
 		self.expressions.append(terms[0])
 		for i in range(len(ops)):
-			print self.expressions[-1].getVariables(), terms[i+1].getVariables()
 			if ops[i]=='+' and len(self.expressions[-1].getVariables())==0 and eval(repr(self.expressions[-1].getAnswer()))==0:
 				self.expressions.pop()
 				self.expressions.append(terms[i+1])
@@ -512,8 +513,8 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(x,y)")
-	tokens=tker.tokenize("1*-x+0*-y+x*-z")
-	#tokens=tker.tokenize("pow(2*x, 2)/x")
+	#tokens=tker.tokenize("x/z")
+	tokens=tker.tokenize("pow(2*x, 2)/x")
 
 	
 	print tokens

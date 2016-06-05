@@ -133,8 +133,10 @@ class Pow(Function):
 		ops=[]
 		factors.append(Number(self.exponential.getAnswer()))
 		ops.append('*')
-		factors.append(Pow(self.base, Number(self.exponential.getAnswer())))
+		factors.append(Pow(self.base, Number(self.exponential.getAnswer()-1)))
 		ops.append('*')
-		factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer()-1)))
+		#factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer())))
+		factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(1)))
+		print factors, ops
 		return Term(factors, ops)
 		#return Term([Number(self.exponential.getAnswer()), Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer()-1))], ['*', '*'])
