@@ -1,6 +1,10 @@
 import re
 
 class Regex:
+	__e  =re.compile("e",re.I)
+	__pi =re.compile("pi", re.I)
+	__num=re.compile("\d*\.\d+|\d+", re.I)
+	
 	__sin=re.compile("sine?", re.I)
 	__cos=re.compile("cos|cosine", re.I)
 	__tan=re.compile("tan|tangent", re.I)
@@ -23,7 +27,23 @@ class Regex:
 		 func.append(cls.__pow)
 		 func.append(cls.__log)
 		 return func
+
+	@classmethod
+	def e(cls):
+		return cls.__e
+
+	@classmethod
+	def pi(cls):
+		return cls.__pi
+
+	@classmethod
+	def pi(cls):
+		return cls.__pi
 	
+	@classmethod
+	def number(cls):
+		return cls.__num
+
 	@classmethod
 	def sin(cls):
 		return cls.__sin

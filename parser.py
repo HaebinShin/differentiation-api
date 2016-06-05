@@ -54,10 +54,12 @@ class Parser:
 			#tokens.popFront()
 			#return Factor(['-',fac], "negative")
 			return Negative(fac)
-		elif re.match("\d*\.\d+|\d+", now)!=None:
+		#elif re.match("\d*\.\d+|\d+", now)!=None:
+		elif Number.isNumber(now)==True:
 			tokens.popFront()
 			#return Factor(now, "number")
-			return Number(now)
+			#return Number(now)
+			return Number.determine(now)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
 			self.functions.add(now)
@@ -102,7 +104,9 @@ class Variable:
 		return self.value
 
 	def getVariables(self):
-		return list(self.variable)
+		var=[]
+		var.append(self.variable)
+		return var
 
 	def setVariable(self, variable, value):
 		if self.variable==variable:		
@@ -156,6 +160,28 @@ class Number:
 
 	def canonicalize(self):
 		return self.getAnswer()
+
+	@staticmethod
+	def isNumber(token):
+		e  =Regex.e()
+		pi =Regex.pi()
+		num=Regex.number()
+		if e.match(token)==None and pi.match(token)==None and num.match(token)==None:
+			return False
+		else:
+			return True
+
+	@staticmethod
+	def determine(token):
+		rg_e  =Regex.e()
+		rg_pi =Regex.pi()
+		rg_num=Regex.number()
+		if rg_e.match(token)!=None:
+			return Number(e)
+		elif rg_pi.match(token)!=None:
+			return Number(pi)
+		else:
+			return Number(token)
 
 
 class Negative:
@@ -470,10 +496,10 @@ class Ast:
 		return self.expression
 
 	def getVariables(self):
-		if self.variables==None:
-			return None
-		else:
-			return list(self.variables)
+		#if self.variables==None:
+		#	return None
+		#else:
+		return list(self.variables)
 
 	def getFunctions(self):
 		return list(self.functions)
@@ -526,7 +552,8 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1+2+pow(2,x)")
 	#tokens=tker.tokenize("x/z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
-	tokens=tker.tokenize("y+log(2, x)")
+	#tokens=tker.tokenize("y+log(2, x)")
+	tokens=tker.tokenize("sin(2*pi)")
 
 	
 	print tokens

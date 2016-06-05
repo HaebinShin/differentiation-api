@@ -24,7 +24,7 @@ class Function:
 			return "%s(%s,%s)" % (self.name, self.base, self.exponential)
 
 	def getVariables(self):
-		print self.base, self.exponential
+		#print self.base, self.exponential
 		if self.param!=None:
 			return self.param.getVariables()
 		elif len(self.base.getVariables())>len(self.exponential.getVariables()):
@@ -150,7 +150,7 @@ class Pow(Function):
 		Function.__init__(self, name="pow", base=base, exponential=exponential)
 
 	def getAnswer(self):
-		print self.base.getAnswer(), self.exponential.getAnswer()
+		#print self.base.getAnswer(), self.exponential.getAnswer()
 		return pow(self.base.getAnswer(), self.exponential.getAnswer())
 
 	def setVariable(self, variable, value):
