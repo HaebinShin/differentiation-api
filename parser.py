@@ -252,8 +252,26 @@ class Term:
 				if ops[i]=='*' and factors[i+1].getVariables()==None and eval(repr(factors[i+1]))==0:
 					self.terms=[Number(0)]
 					break
-				self.terms.append(ops[i])
-				self.terms.append(factors[i+1])
+				elif ops[i]=='*' and self.terms[-1].getVariables()==None and eval(repr(self.terms[-1]))==1:
+					self.terms.pop()
+					self.terms.append(factors[i+1])
+					continue
+				elif factors[i+1].getVariables()==None and eval(repr(factors[i+1]))==1:
+					continue
+				else:
+					self.terms.append(ops[i])
+					self.terms.append(factors[i+1])
+
+	#	self.terms=[]
+	#	if len(self.reduce_terms)!=1:
+	#		for i in range(len(self.reduce_terms)):
+	#			if self.reduce_terms[i]=='*':
+	#				if self.reduce_terms[i+1].getVariables()==None and eval(repr(self.reduce_terms[i+1]))==1:
+	#					self.terms.append(self.reduce_terms[i-1])
+
+
+	#def __reduceOne(self, terms):
+	#	for factor in terms:
 
 
 	def __str__(self):
@@ -479,7 +497,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(x,y)")
-	tokens=tker.tokenize("-x*-y*-z")
+	tokens=tker.tokenize("1*-x+0*-y+x*-z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 
 	
