@@ -123,6 +123,7 @@ class Exp(Function):
 	def getAnswer(self):
 		return exp(self.param.getAnswer())
 
+
 class Log(Function):
 	def __init__(self, base, exponential):
 		Function.__init__(self, name="log", base=base, exponential=exponential)
@@ -173,6 +174,8 @@ class Pow(Function):
 			factors.append(Log(Number(e), Number(self.base.getAnswer())))
 			ops.append('*')
 			factors.append(Pow(self.base, self.exponential))
+			ops.append('*')
+			factors.append(self.exponential.getDerivativeBy(by_variable))
 		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())==0:
 			factors.append(Number(0))
 		return Term(factors, ops)
