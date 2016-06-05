@@ -1,5 +1,6 @@
 import re
 from functions import *
+from math import e, pi
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -129,10 +130,20 @@ class Number:
 
 
 	def __str__(self):
-		return "%s" % self.number
+		if self.number==e:
+			return "e"
+		elif self.number==pi:
+			return "pi"
+		else:
+			return "%s" % self.number
 
 	def __repr__(self):
-		return "%s" % self.number
+		if self.number==e:
+			return "e"
+		elif self.number==pi:
+			return "pi"
+		else:
+			return "%s" % self.number
 
 	def getVariables(self):
 		return list()
@@ -249,8 +260,8 @@ class Term:
 			self.terms=[Number(0)]
 		else:
 			for i in range(len(ops)):
-				if len(factors[i+1].getVariables())==0:
-					print factors[i+1].getAnswer()
+				#if len(factors[i+1].getVariables())==0:
+					#print factors[i+1].getAnswer()
 				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
 					self.terms=[Number(0)]
 					break
@@ -512,9 +523,10 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("x+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
-	#tokens=tker.tokenize("1+2+pow(x,y)")
+	#tokens=tker.tokenize("1+2+pow(2,x)")
 	#tokens=tker.tokenize("x/z")
-	tokens=tker.tokenize("pow(2*x, 2)/x")
+	#tokens=tker.tokenize("pow(2*x, 2)/x")
+	tokens=tker.tokenize("y+log(2, x)")
 
 	
 	print tokens
@@ -523,12 +535,12 @@ if __name__ == "__main__":
 	ast = p.parse(tokens)
 	print ast
 	print ast.setVariable("x", 2)
-	print ast.setVariable("y", 3)
+	#print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
 	print ast.getAnswer()
 	
 
-	deri_ast = ast.getDerivativeBy('y')
+	deri_ast = ast.getDerivativeBy('x')
 	print deri_ast
 	print deri_ast.setVariable("x", 2)
 	print deri_ast.setVariable("y", 3)

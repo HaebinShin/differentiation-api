@@ -1,4 +1,4 @@
-from math import sin, cos, tan, exp, log
+from math import sin, cos, tan, exp, log, e
 from regex import Regex
 from parser import *
 #import regex as Regex
@@ -24,10 +24,13 @@ class Function:
 			return "%s(%s,%s)" % (self.name, self.base, self.exponential)
 
 	def getVariables(self):
+		print self.base, self.exponential
 		if self.param!=None:
 			return self.param.getVariables()
-		else:
+		elif len(self.base.getVariables())>len(self.exponential.getVariables()):
 			return self.base.getVariables()
+		else:
+			return self.exponential.getVariables()
 
 	def setVariable(self, variable, value):
 		return self.param.setVariable(variable, value)
@@ -53,6 +56,7 @@ class Function:
 		tan=Regex.tan()
 		exp=Regex.exp()
 		pow=Regex.pow()
+		log=Regex.log()
 
 		if sin.match(name)!=None:
 			return Sin(param)
@@ -64,6 +68,8 @@ class Function:
 			return Exp(param)
 		elif pow.match(name)!=None:
 			return Pow(base, exponential)
+		elif log.match(name)!=None:
+			return Log(base, exponential)
 		else:
 			return None
 		
@@ -117,12 +123,34 @@ class Exp(Function):
 	def getAnswer(self):
 		return exp(self.param.getAnswer())
 
+class Log(Function):
+	def __init__(self, base, exponential):
+		Function.__init__(self, name="log", base=base, exponential=exponential)
+
+	def getAnswer(self):
+		return log(self.exponential.getAnswer(), self.base.getAnswer())
+
+	def setVariable(self, variable, value):
+		return (self.base.setVariable(variable, value) | self.exponential.setVariable(variable, value))
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Number(1))
+		ops.append('*')
+		factors.append(Pow(self.exponential, Number(-1)))
+		ops.append('/')
+		factors.append(Log(Number(e), self.base))
+
+		return Term(factors, ops)
+
 
 class Pow(Function):
 	def __init__(self, base, exponential):
 		Function.__init__(self, name="pow", base=base, exponential=exponential)
 
 	def getAnswer(self):
+		print self.base.getAnswer(), self.exponential.getAnswer()
 		return pow(self.base.getAnswer(), self.exponential.getAnswer())
 
 	def setVariable(self, variable, value):
@@ -131,12 +159,20 @@ class Pow(Function):
 	def getDerivativeBy(self, by_variable):
 		factors=[]
 		ops=[]
-		factors.append(Number(self.exponential.getAnswer()))
-		ops.append('*')
-		factors.append(Pow(self.base, Number(self.exponential.getAnswer()-1)))
-		ops.append('*')
-		#factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer())))
-		factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(1)))
-		print factors, ops
+		if len(self.base.getVariables())>0 and len(self.exponential.getVariables())==0:
+
+			factors.append(Number(self.exponential.getAnswer()))
+			ops.append('*')
+			factors.append(Pow(self.base, Number(self.exponential.getAnswer()-1)))
+			ops.append('*')
+			#factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer())))
+			factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(1)))
+
+		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())>0:
+			
+			factors.append(Log(Number(e), Number(self.base.getAnswer())))
+			ops.append('*')
+			factors.append(Pow(self.base, self.exponential))
 		return Term(factors, ops)
-		#return Term([Number(self.exponential.getAnswer()), Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer()-1))], ['*', '*'])
+
+

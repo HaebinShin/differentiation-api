@@ -6,6 +6,7 @@ class Regex:
 	__tan=re.compile("tan|tangent", re.I)
 	__exp=re.compile("exp|exponential", re.I)
 	__pow=re.compile("pow|power", re.I)
+	__log=re.compile("log", re.I)
 
 	@classmethod
 	def singleParamFunctions(cls):
@@ -20,6 +21,7 @@ class Regex:
 	def doubleParamFunctions(cls):
 		 func=[]
 		 func.append(cls.__pow)
+		 func.append(cls.__log)
 		 return func
 	
 	@classmethod
@@ -41,3 +43,7 @@ class Regex:
 	@classmethod
 	def pow(cls):
 		return cls.__pow
+	
+	@classmethod
+	def log(cls):
+		return cls.__log
