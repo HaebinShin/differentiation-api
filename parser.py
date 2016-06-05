@@ -295,12 +295,15 @@ class Term:
 		variables=set([])
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				print factor
+				#print factor
 				var=factor.getVariables()
 				if var!=None:
 					for now in var:
 						variables.add(now)
-		return variables
+		#if len(variables)==0:
+		#	return None
+		#else:
+		return list(variables)
 
 	def setVariable(self, variable, value):
 		is_set=False
@@ -366,11 +369,17 @@ class Expression:
 
 		self.expressions=[]
 		self.expressions.append(terms[0])
-		#print "param terms : ", terms
-		#print "param ops : ", ops
 		for i in range(len(ops)):
-			self.expressions.append(ops[i])
-			self.expressions.append(terms[i+1])
+			print self.expressions[-1].getVariables(), terms[i+1].getVariables()
+			if ops[i]=='+' and len(self.expressions[-1].getVariables())==0 and eval(repr(self.expressions[-1].getAnswer()))==0:
+				self.expressions.pop()
+				self.expressions.append(terms[i+1])
+				continue
+			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
+				continue
+			else:
+				self.expressions.append(ops[i])
+				self.expressions.append(terms[i+1])
 
 	def __str__(self):
 		return "%s" % self.expressions
@@ -397,6 +406,9 @@ class Expression:
 				if var!=None:
 					for now in var:
 						variables.add(now)
+		#if len(variables)==0:
+		#	return None
+		#else:
 		return list(variables)
 
 	def setVariable(self, variable, value):
@@ -446,7 +458,10 @@ class Ast:
 		return self.expression
 
 	def getVariables(self):
-		return list(self.variables)
+		if self.variables==None:
+			return None
+		else:
+			return list(self.variables)
 
 	def getFunctions(self):
 		return list(self.functions)
