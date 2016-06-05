@@ -173,6 +173,8 @@ class Pow(Function):
 			factors.append(Log(Number(e), Number(self.base.getAnswer())))
 			ops.append('*')
 			factors.append(Pow(self.base, self.exponential))
+		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())==0:
+			factors.append(Number(0))
 		return Term(factors, ops)
 
 
