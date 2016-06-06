@@ -490,7 +490,7 @@ class Ast:
 		self.variables=expression.getVariables()
 		self.functions=functions
 
-		self.setted_variable={}
+		self.setted_variable=dict((var, None) for var in self.variables)
 
 	def __str__(self):
 		return "tree : %s\nvariable : %s\nfunctions : %s" % (self.getTree(), self.getVariables(), self.getFunctions())
@@ -503,6 +503,9 @@ class Ast:
 		#	return None
 		#else:
 		return list(self.variables)
+	
+	def getSettedVariables(self):
+		return self.setted_variable
 
 	def getFunctions(self):
 		return list(self.functions)
@@ -537,6 +540,11 @@ class Ast:
 		deri_expression=self.expression.getDerivativeBy(by_variable)
 		#print deri_expression
 		return Ast(deri_expression, ["adsf"])
+
+	def isContinuous(self):
+		# f(a-alpha) similar f(a+alpha)
+	def isDerivativable(self):
+		# f'(a-alpha) similar f'(a+alpha)
 
 	def getGradient(self):
 		pass # Vector(tree, variable)
@@ -573,12 +581,42 @@ if __name__ == "__main__":
 
 	deri_ast = ast.getDerivativeBy('x')
 	print deri_ast
-	print deri_ast.setVariable("x", 2)
+	print deri_ast.getSettedVariables()
+	#print deri_ast.setVariable("x", 2)
 	print deri_ast.setVariable("y", 3)
 	print deri_ast.setVariable("z", 4)
 	print deri_ast.getAnswer()
 
 '''
+tker=Tokenizer()
+tokens=tker.tokenize(input)
+
+p=Parser()
+expr=p.parse(tokens)
+
+ast=Ast("asdfasdf")
+
+ast=Ast(expr)
+ast.getVariables("x", 2)
+ast.getVariables("y", 2)
+ast.getAnswer()
+
 c = Calculator()
-c.getAnswer(ast)
+c.isContinue(expr, Coordinate)
+c.isDifferential(expr, Coordinate)
+c.getDerivativeBy(expr, variable)
+c.getAnswer(expr, Coordinate)
+c.getGradient(expr)
+
+
+f=Formula("asfd")
+f.isValid()
+f.notation()
+f.canonicalize()
+f.getAnswer(Coordinate)
+(Formula type)deri_formula==f.getDerivativeBy(variable)
+f.getGradient()
+
+
+
 '''
