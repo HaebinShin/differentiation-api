@@ -88,7 +88,7 @@ class Sin(Function):
 		factors.append(Cos(self.param))
 		ops.append('*')
 		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
-		return Term(factors,ops)
+		return Paranthesis(Expression([Term(factors,ops)], []))
 
 
 class Cos(Function):
@@ -106,7 +106,8 @@ class Cos(Function):
 		factors.append(Sin(self.param))
 		ops.append('*')
 		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
-		return Term(factors,ops)
+		return Paranthesis(Expression([Term(factors,ops)], []))
+		#return Term(factors,ops)
 
 class Tan(Function):
 	def __init__(self, param):
@@ -142,8 +143,10 @@ class Log(Function):
 		factors.append(Pow(self.exponential, Number(-1)))
 		ops.append('/')
 		factors.append(Log(Number(e), self.base))
+		ops.append('*')
+		factors.append(Paranthesis(self.exponential.getDerivativeBy(by_variable)))
 
-		return Term(factors, ops)
+		return Paranthesis(Expression([Term(factors, ops)], []))
 
 
 class Pow(Function):
@@ -175,9 +178,9 @@ class Pow(Function):
 			ops.append('*')
 			factors.append(Pow(self.base, self.exponential))
 			ops.append('*')
-			factors.append(self.exponential.getDerivativeBy(by_variable))
+			factors.append(Parathesis(self.exponential.getDerivativeBy(by_variable)))
 		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())==0:
 			factors.append(Number(0))
-		return Term(factors, ops)
+		return Paranthesis(Expression([Term(factors, ops)], []))
 
 

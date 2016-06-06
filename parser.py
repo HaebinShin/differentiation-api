@@ -54,12 +54,6 @@ class Parser:
 			#tokens.popFront()
 			#return Factor(['-',fac], "negative")
 			return Negative(fac)
-		#elif re.match("\d*\.\d+|\d+", now)!=None:
-		elif Number.isNumber(now)==True:
-			tokens.popFront()
-			#return Factor(now, "number")
-			#return Number(now)
-			return Number.determine(now)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
 			self.functions.add(now)
@@ -81,6 +75,12 @@ class Parser:
 			exp2 = self.takeExpression(tokens)
 			tokens.popFront()
 			return Function.determine(now, base=exp1, exponential=exp2)
+		#elif re.match("\d*\.\d+|\d+", now)!=None:
+		elif Number.isNumber(now)==True:
+			tokens.popFront()
+			#return Factor(now, "number")
+			#return Number(now)
+			return Number.determine(now)
 		else:
 			#self.variables.add(now)
 			tokens.popFront()
@@ -156,6 +156,7 @@ class Number:
 		return False
 
 	def getDerivativeBy(self, by_variable):
+		#return Term([Number(0)], [])
 		return Number(0)
 
 	def canonicalize(self):
@@ -378,6 +379,8 @@ class Term:
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
 		
 		#return Expression(deri_terms, deri_terms_ops)
+		print "deri_terms : ",deri_terms
+		print "deri_terms_ops : ",deri_terms_ops
 		return deri_terms, deri_terms_ops
 
 	def canonicalize(self):
@@ -553,7 +556,8 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("x/z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	tokens=tker.tokenize("sin(2*pi)")
+	#tokens=tker.tokenize("pow(2,sin(x))")
+	tokens=tker.tokenize("log(e,sin(x))")
 
 	
 	print tokens
