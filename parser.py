@@ -581,6 +581,11 @@ class Ast:
 
 	def getGradient(self):
 		pass # Vector(tree, variable)
+		vector=[]
+		for variable in self.variables:
+			vector.append(self.expression.getDerivativeBy(variable))
+		return vector
+
 
 
 if __name__ == "__main__":
@@ -594,11 +599,11 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(2,x)")
-	#tokens=tker.tokenize("x/z")
+	tokens=tker.tokenize("x*z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(2,sin(x))")
-	tokens=tker.tokenize("log(e,sin(x))")
+	#tokens=tker.tokenize("log(e,sin(x))")
 
 	
 	print tokens
@@ -610,6 +615,8 @@ if __name__ == "__main__":
 	#print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
 	print ast.getAnswer()
+	print ast.isContinuous()
+	print ast.getGradient()
 	
 
 	deri_ast = ast.getDerivativeBy('x')
