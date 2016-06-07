@@ -1,4 +1,10 @@
 from math import sqrt
+
+'''
+usage:	Vector(1,2)
+	Vector([1,2])
+'''
+
 class Vector:
 	def __init__(self, *args):
 		self.args=[]

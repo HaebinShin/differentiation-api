@@ -89,8 +89,19 @@ class Parser:
 			return Variable(now)
 
 
-class Variable:
+class Factor:
+	def __init__(self, __type):
+		self.__type=__type
+
+	def setVarable(self):
+		return False
+	
+	def getType(self):
+		return self.__type
+		
+class Variable(Factor):
 	def __init__(self, variable):
+		Factor.__init__(self, "variable")
 		self.variable=variable
 
 		self.value=None
@@ -125,8 +136,9 @@ class Variable:
 	def canonicalize(self):
 		return self.getAnswer()
 
-class Number:
+class Number(Factor):
 	def __init__(self, number):
+		Factor.__init__(self, "number")
 		self.number=number
 		
 
@@ -186,8 +198,9 @@ class Number:
 			return Number(token)
 
 
-class Negative:
+class Negative(Factor):
 	def __init__(self, factor):
+		Factor.__init__(self, factor.getType())
 		self.factor=factor
 
 	def getAnswer(self):
@@ -224,8 +237,9 @@ class Negative:
 	def canonicalize(self):
 		return self.factors.canonicalize()
 
-class Paranthesis:
+class Paranthesis(Factor):
 	def __init__(self, expression):
+		Factor.__init__(self, "paranthesis")
 		self.expression=expression
 
 	def getAnswer(self):
@@ -249,33 +263,6 @@ class Paranthesis:
 	def canonicalize(self):
 		return self.expression.canonicalize()
 
-class Factor:
-	def __init__(self, param, typename):
-		self.factors=[]
-		if type(param)==list:
-			for i in range(len(param)):
-				if typename=="function" and i==0:
-					instruction={}
-					instruction[typename]=param[i]
-					self.factors.append(instruction)
-				else:
-					self.factors.append(param[i])
-
-		#else:
-								#self.factors.append(param)
-			#instruction={}
-			#instruction[typename]=param
-			#self.factors.append(instruction)
-
-	def __str__(self):
-		return "%s" % self.factors
-	
-	def __repr__(self):
-		return "%s" % self.factors
-
-	def setVarable(self):
-		return False
-		
 
 class Term:
 	def __init__(self, factors, ops):
@@ -283,6 +270,25 @@ class Term:
 		self.ops=ops
 
 		self.terms=[]
+			
+		for i in range(len(self.factors)):
+			if self.factors[i].getType()=="function":
+				print self.factors[i]
+				if self.factors[i].getName()=="log":
+					if self.factors[i].getBase().getType()=="number" and self.factors[i].getExponential().getType()=="number" and str(self.factors[i].getBase().getAnswer())==str(self.factors[i].getExponential().getAnswer()):
+						self.factors[i]=Number(1)
+					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==1:
+						self.factors[i]=Number(0)
+				elif self.factors[i].getName()=="pow":
+					if self.factors[i].getBase().getType()=="number" and self.factors[i].getBase().getAnswer()==0:
+						self.factors[i]=Number(0)
+					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==0:
+						self.factors[i]=Number(1)
+
+					
+			
+
+
 		self.terms.append(factors[0])
 		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
 			self.terms=[Number(0)]
@@ -321,6 +327,13 @@ class Term:
 	def __repr__(self):
 		return "%s" % self.terms
 	
+	def getType(self):
+		_type=self.terms[0].getType()
+		for fac in self.terms:
+			if _type!=fac.getType():
+				_type="equation"
+		return _type
+
 	def getAnswer(self):
 		reduced=""
 		for factor in self.terms:
@@ -428,6 +441,13 @@ class Expression:
 
 	def __repr__(self):
 		return "%s" % self.expressions
+
+	def getType(self):
+		_type=self.expressions[0].getType()
+		for term in self.expressions:
+			if _type!=term.getType():
+				_type="equation"
+		return _type
 
 	def getAnswer(self):
 		reduced=""
@@ -623,11 +643,12 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(2,x)")
-	tokens=tker.tokenize("x*z")
+	#tokens=tker.tokenize("x*z")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(2,sin(x))")
-	#tokens=tker.tokenize("log(e,sin(x))")
+	#tokens=tker.tokenize("log(e,1)")
+	tokens=tker.tokenize("2*x+x+x")
 
 	
 	print tokens

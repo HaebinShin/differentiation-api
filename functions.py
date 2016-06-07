@@ -3,8 +3,9 @@ from regex import Regex
 from parser import *
 #import regex as Regex
 
-class Function:
+class Function(Factor):
 	def __init__(self, name=None, param=None, base=None, exponential=None):
+		Factor.__init__(self, "function")
 		self.name=name
 		self.param=param
 		self.base=base
@@ -34,6 +35,18 @@ class Function:
 
 	def setVariable(self, variable, value):
 		return self.param.setVariable(variable, value)
+
+	def getName(self):
+		return self.name
+
+	def getParam(self):
+		return self.param
+
+	def getBase(self):
+		return self.base
+
+	def getExponential(self):
+		return self.exponential
 
 	@staticmethod
 	def isSingleParamFunction(name):
@@ -80,6 +93,7 @@ class Sin(Function):
 		Function.__init__(self, name="sin", param=param)
 
 	def getAnswer(self):
+		#print self.param
 		return sin(self.param.getAnswer())
 
 	def getDerivativeBy(self, by_variable):
@@ -127,6 +141,11 @@ class Exp(Function):
 
 class Log(Function):
 	def __init__(self, base, exponential):
+		#print base.getVariables()
+		#print exponential.getVariables()
+	#	if len(base.getVariables())==0 and len(exponential.getVariables())==0:
+	#		Number(1)
+	#	else:
 		Function.__init__(self, name="log", base=base, exponential=exponential)
 
 	def getAnswer(self):
@@ -178,7 +197,7 @@ class Pow(Function):
 			ops.append('*')
 			factors.append(Pow(self.base, self.exponential))
 			ops.append('*')
-			factors.append(Parathesis(self.exponential.getDerivativeBy(by_variable)))
+			factors.append(Paranthesis(self.exponential.getDerivativeBy(by_variable)))
 		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())==0:
 			factors.append(Number(0))
 		return Paranthesis(Expression([Term(factors, ops)], []))
