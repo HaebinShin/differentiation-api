@@ -1,6 +1,7 @@
 import re
 from functions import *
 from math import e, pi
+from vector import Vector
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -379,8 +380,8 @@ class Term:
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
 		
 		#return Expression(deri_terms, deri_terms_ops)
-		print "deri_terms : ",deri_terms
-		print "deri_terms_ops : ",deri_terms_ops
+		#print "deri_terms : ",deri_terms
+		#print "deri_terms_ops : ",deri_terms_ops
 		return deri_terms, deri_terms_ops
 
 	def canonicalize(self):
@@ -581,10 +582,33 @@ class Ast:
 
 	def getGradient(self):
 		pass # Vector(tree, variable)
-		vector=[]
+		vec_list=[]
 		for variable in self.variables:
-			vector.append(self.expression.getDerivativeBy(variable))
-		return vector
+			vec_list.append(self.expression.getDerivativeBy(variable))
+		return Vector(vec_list)
+	
+	def getDirectionalDerivative(self, vector):
+		grad_vec=self.getGradient()
+		unit_vec=vector.getUnitVector()
+
+		if grad_vec.getDimension()!=unit_vec.getDimension():
+			return "error - not same dimension"
+		
+		terms=[]
+		terms_ops=[]
+		for i in range(grad_vec.getDimension()):
+			factors=[]
+			factors_ops=[]
+		
+			expression=grad_vec.getScala(i)
+			factors.append(Number(unit_vec.getScala(i)))
+			factors_ops.append('*')
+			factors.append(Paranthesis(expression))
+			terms.append(Term(factors, factors_ops))
+
+		for i in range(len(terms)-1):
+			terms_ops.append('+')
+		return Ast(Expression(terms, terms_ops), [])
 
 
 
@@ -614,10 +638,10 @@ if __name__ == "__main__":
 	print ast.setVariable("x", 2)
 	#print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
-	print ast.getAnswer()
-	print ast.isContinuous()
-	print ast.getGradient()
-	
+	#print ast.getAnswer()
+	#print ast.isContinuous()
+	#print ast.getGradient()
+	print ast.getDirectionalDerivative(Vector(3,4))
 
 	deri_ast = ast.getDerivativeBy('x')
 	print deri_ast
