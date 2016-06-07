@@ -543,8 +543,41 @@ class Ast:
 
 	def isContinuous(self):
 		# f(a-alpha) similar f(a+alpha)
+		for variable in self.variables:
+			if self.__isInitVariable(variable)==False:
+				return "error - not initialize variable"
+
+		mid=self.expression.getAnswer()
+		alpha=float(0.0000001)
+		tolerance=float(2)
+
+		result=True
+		for variable in self.variables:
+			self.expression.setVariable(variable, self.setted_variable[variable]-alpha)
+			left=self.expression.getAnswer()
+			self.expression.setVariable(variable, self.setted_variable[variable]+alpha)
+			right=self.expression.getAnswer()
+
+			result&=(abs(left-mid)<tolerance and abs(mid-right)<tolerance)
+
+			self.expression.setVariable(variable, self.setted_variable[variable])
+		return result
+
+					
+
 	def isDerivativable(self):
 		# f'(a-alpha) similar f'(a+alpha)
+		if self.expression.isContinuous()!=True:
+			return False
+
+		result=True
+		for variable in self.variables:
+			derivate=self.expression.getDerivativeBy(variable)
+			derivate.setVariable(variable, self.setted_variable[variable])
+			result&=derivate.isContinue()
+		return result
+			
+
 
 	def getGradient(self):
 		pass # Vector(tree, variable)
