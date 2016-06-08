@@ -24,6 +24,12 @@ class Function(Factor):
 		else:
 			return "%s(%s,%s)" % (self.name, self.base, self.exponential)
 
+	def toString(self):
+		if self.param!=None:
+			return self.name+'('+self.param.toString()+')'
+		else:
+			return self.name+'('+self.base.toString()+self.exponential.toString()+')'
+
 	def getVariables(self):
 		#print self.base, self.exponential
 		if self.param!=None:

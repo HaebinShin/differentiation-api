@@ -2,6 +2,7 @@ import re
 from functions import *
 from math import e, pi
 from vector import Vector
+from collections import Counter
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -112,6 +113,9 @@ class Variable(Factor):
 	def __repr__(self):
 		return "%s" % self.variable
 
+	def toString(self):
+		return self.variable
+
 	def getAnswer(self):
 		return self.value
 
@@ -161,6 +165,9 @@ class Number(Factor):
 			return "pi"
 		else:
 			return "%s" % self.number
+
+	def toString(self):
+		return str(self.number)
 
 	def getVariables(self):
 		return list()
@@ -224,8 +231,11 @@ class Negative(Factor):
 			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
 			return "-%s" % self.factor
 
+	def toString(self):
+		return self.factor.toString()
+
 	def getVariables(self):
-			return self.factor.getVariables()
+		return self.factor.getVariables()
 
 	def setVariable(self, variable, value):
 		return self.factor.setVariable(variable, value)
@@ -251,6 +261,9 @@ class Paranthesis(Factor):
 	def __repr__(self):
 		return "(%s)" % self.expression
 
+	def toString(self):
+		return self.expression.toString()
+
 	def getVariables(self):
 		return self.expression.getVariables()
 
@@ -266,10 +279,10 @@ class Paranthesis(Factor):
 
 class Term:
 	def __init__(self, factors, ops):
+
 		self.factors=factors
 		self.ops=ops
 
-		self.terms=[]
 			
 		for i in range(len(self.factors)):
 			if self.factors[i].getType()=="function":
@@ -285,29 +298,109 @@ class Term:
 					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==0:
 						self.factors[i]=Number(1)
 
-					
-			
+
+		reduced=self.__reduceMulDiv(factors, ops)
+
+		self.terms=[]
+
+#		self.terms.append(factors[0])
+#		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
+#			self.terms=[Number(0)]
+#		else:
+#			for i in range(len(ops)):
+#				#if len(factors[i+1].getVariables())==0:
+#					#print factors[i+1].getAnswer()
+#				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
+#					self.terms=[Number(0)]
+#					break
+#				elif ops[i]=='*' and len(self.terms[-1].getVariables())==0 and eval(repr(self.terms[-1].getAnswer()))==1:
+#					self.terms.pop()
+#					self.terms.append(factors[i+1])
+#					continue
+#				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
+#					continue
+#				else:
+#					self.terms.append(ops[i])
+#					self.terms.append(factors[i+1])
+		
+	
+		print "now terms : ", reduced
+
+		
+		#self.coeff=dict((key, value) for key, value in Counter(reduced).iteritems())
+		#print "coeff : ", self.coeff	
+
+		multiply_variable=[]
+		divide_variable=[]
+		last_operator='*'
+		coeff=1
+		#idx=0
+		for factor in reduced:
+			if factor not in ['*', '/']:
+				if len(factor.getVariables())==0:	# number
+					#if multiply_variable!=None:
+						#self.coeff[last_variable]*=factor.Answer()
+						if last_operator=='*':
+							coeff*=factor.getAnswer()
+						else:
+							coeff/=factor.getAnswer()
+				else:					# variable
+					#if len(multiply_variable)==0:
+					#	multiply_variable.append(factor.toString())
+					#else:
+						if last_operator=='*':
+							multiply_variable.append(factor)
+						else:
+							divide_variable.append(factor)
+			else:
+				last_operator=factor
+			#idx+=1
+		
+		multiply_variable.sort()
+
+		print coeff
+		print multiply_variable
+		print divide_variable
 
 
-		self.terms.append(factors[0])
-		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
-			self.terms=[Number(0)]
-		else:
-			for i in range(len(ops)):
-				#if len(factors[i+1].getVariables())==0:
-					#print factors[i+1].getAnswer()
-				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
-					self.terms=[Number(0)]
-					break
-				elif ops[i]=='*' and len(self.terms[-1].getVariables())==0 and eval(repr(self.terms[-1].getAnswer()))==1:
-					self.terms.pop()
-					self.terms.append(factors[i+1])
-					continue
-				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
-					continue
-				else:
-					self.terms.append(ops[i])
-					self.terms.append(factors[i+1])
+		_reduced=[]
+		if coeff!=1:
+			_reduced.append(Number(coeff))
+
+#		mul_idx=0
+#		div_idx=0
+#		ops_idx=0
+
+		for var in multiply_variable:
+			if len(_reduced)!=0:
+				_reduced.append('*')
+			_reduced.append(var)
+		for var in divide_variable:
+			if len(_reduced)!=0:
+				_reduced.append('/')
+			_reduced.append(var)
+
+		
+#		_reduced.append(multiply_variable[mul_idx])
+#		mul_idx+=1
+#		for i in range(len(multiply_variable)+len(divide_variable)+len(ops)-1):
+#			if i%2==0:
+#				_reduced.append(ops[ops_idx])
+#				ops_idx+=1
+#			else:
+#				if ops[ops_idx-1]=='*':
+#					_reduced.append(multiply_variable[mul_idx])
+#					mul_idx+=1
+#				else:
+#					_reduced.append(divide_variable[div_idx])
+#					div_idx+=1
+#
+		print "_reduced : ", _reduced
+	
+		self.terms=_reduced
+		self.coeff=coeff	
+						
+
 
 	#	self.terms=[]
 	#	if len(self.reduce_terms)!=1:
@@ -326,6 +419,47 @@ class Term:
 
 	def __repr__(self):
 		return "%s" % self.terms
+
+
+	def __reduceMulDiv(self, factors, ops):
+		reduced=[]
+
+		reduced.append(factors[0])
+		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
+			reduced=[Number(0)]
+		else:
+			for i in range(len(ops)):
+				#if len(factors[i+1].getVariables())==0:
+					#print factors[i+1].getAnswer()
+				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
+					reduced=[Number(0)]
+					break
+				elif ops[i]=='*' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==1:
+					reduced.pop()
+					reduced.append(factors[i+1])
+					continue
+				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
+					continue
+				else:
+					reduced.append(ops[i])
+					reduced.append(factors[i+1])
+		return reduced
+		
+	
+		
+	def getCoeff(self):
+		return self.coeff
+
+
+	def toString(self):
+		string=""
+		for factor in self.terms:
+			#print factor
+			if factor in ['*', '/']:
+				string+=factor
+			else:
+				string+=factor.toString()
+		return string
 	
 	def getType(self):
 		_type=self.terms[0].getType()
@@ -349,7 +483,7 @@ class Term:
 		variables=set([])
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				#print factor
+				print factor
 				var=factor.getVariables()
 				if var!=None:
 					for now in var:
@@ -424,23 +558,73 @@ class Expression:
 		self.variables={}
 
 		self.expressions=[]
-		self.expressions.append(terms[0])
-		for i in range(len(ops)):
-			if ops[i]=='+' and len(self.expressions[-1].getVariables())==0 and eval(repr(self.expressions[-1].getAnswer()))==0:
-				self.expressions.pop()
-				self.expressions.append(terms[i+1])
-				continue
-			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
-				continue
-			else:
-				self.expressions.append(ops[i])
-				self.expressions.append(terms[i+1])
+#		self.expressions.append(terms[0])
+#		for i in range(len(ops)):
+#			if ops[i]=='+' and len(self.expressions[-1].getVariables())==0 and eval(repr(self.expressions[-1].getAnswer()))==0:
+#				self.expressions.pop()
+#				self.expressions.append(terms[i+1])
+#				continue
+#			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
+#				continue
+#			else:
+#				self.expressions.append(ops[i])
+#				self.expressions.append(terms[i+1])
+
+		reduced=self.__reducePlusMinus(terms, ops)
+
+
+		coeff_map={}
+		plus_variable=[]
+		minus_variable=[]
+		last_operator='+'
+		coeff=0
+		for term in reduced:
+			#print "expressions term : ", 
+			#if Number.isNumber(str(term[0].getAnswer()))==True:
+			if term not in ['+', '-']:
+				coeff=term.getCoeff()
+				print term.getVariables()
+				if coeff_map.get(str(term.getVariables().sort()))==None:
+					coeff_map[term.toString()]=1
+				else:
+					coeff_map[term.toString()]+=coeff
+			
+
+
+		print "coeff_map : ", coeff_map	
+		self.expressions=reduced
 
 	def __str__(self):
 		return "%s" % self.expressions
 
 	def __repr__(self):
 		return "%s" % self.expressions
+
+
+	def __reducePlusMinus(self, terms, ops):
+		reduced=[]
+		reduced.append(terms[0])
+		for i in range(len(ops)):
+			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:
+				reduced.pop()
+				reduced.append(terms[i+1])
+				continue
+			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
+				continue
+			else:
+				reduced.append(ops[i])
+				reduced.append(terms[i+1])
+		return reduced
+		
+
+	def toString(self):
+		string=""
+		for term in self.expressions:
+			if term in ['+', '-']:
+				string+=term
+			else:
+				string+=term.toString()
+		return string
 
 	def getType(self):
 		_type=self.expressions[0].getType()
@@ -515,6 +699,9 @@ class Ast:
 
 	def __str__(self):
 		return "tree : %s\nvariable : %s\nfunctions : %s" % (self.getTree(), self.getVariables(), self.getFunctions())
+
+	def toString(self):
+		return self.expression.toString()
 	
 	def getTree(self):
 		return self.expression
@@ -601,7 +788,7 @@ class Ast:
 
 
 	def getGradient(self):
-		pass # Vector(tree, variable)
+		#pass # Vector(tree, variable)
 		vec_list=[]
 		for variable in self.variables:
 			vec_list.append(self.expression.getDerivativeBy(variable))
@@ -648,7 +835,9 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(2,sin(x))")
 	#tokens=tker.tokenize("log(e,1)")
-	tokens=tker.tokenize("2*x+x+x")
+	tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
+	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")
+
 
 	
 	print tokens
@@ -656,6 +845,7 @@ if __name__ == "__main__":
 	p=Parser()
 	ast = p.parse(tokens)
 	print ast
+	print "AASDFASDFSADFSDFSDFSFD", ast.toString()
 	print ast.setVariable("x", 2)
 	#print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
@@ -666,6 +856,7 @@ if __name__ == "__main__":
 
 	deri_ast = ast.getDerivativeBy('x')
 	print deri_ast
+	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
 	print deri_ast.getSettedVariables()
 	#print deri_ast.setVariable("x", 2)
 	print deri_ast.setVariable("y", 3)
