@@ -3,6 +3,7 @@ from functions import *
 from math import e, pi
 from vector import Vector
 from collections import Counter
+import ds
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -356,7 +357,10 @@ class Term:
 				last_operator=factor
 			#idx+=1
 		
-		multiply_variable.sort()
+		#multiply_variable.sort()
+		#divide_variable.sort()
+		multiply_variable=ds.class_sort(multiply_variable)
+		divide_variable=ds.class_sort(divide_variable)
 
 		print coeff
 		print multiply_variable
@@ -364,20 +368,26 @@ class Term:
 
 
 		_reduced=[]
-		if coeff!=1:
+		if ((len(multiply_variable)>0 or len(divide_variable)>0) and coeff==1)==False:
 			_reduced.append(Number(coeff))
 
 #		mul_idx=0
 #		div_idx=0
 #		ops_idx=0
-
+		self.only_factor_list=[]
 		for var in multiply_variable:
 			if len(_reduced)!=0:
 				_reduced.append('*')
+			if len(self.only_factor_list)!=0:
+				self.only_factor_list.append('*')
+			self.only_factor_list.append(var)
 			_reduced.append(var)
 		for var in divide_variable:
 			if len(_reduced)!=0:
 				_reduced.append('/')
+			if len(self.only_factor_list)!=0:
+				self.only_factor_list.append('/')
+			self.only_factor_list.append(var)
 			_reduced.append(var)
 
 		
@@ -445,7 +455,9 @@ class Term:
 					reduced.append(ops[i])
 					reduced.append(factors[i+1])
 		return reduced
-		
+	
+	def getWithoutCoeffFactor(self):
+		return self.only_factor_list
 	
 		
 	def getCoeff(self):
@@ -573,6 +585,7 @@ class Expression:
 
 		reduced=self.__reducePlusMinus(terms, ops)
 
+		print "reduced : ", reduced
 
 		coeff_map={}
 		plus_factors=[]
@@ -580,26 +593,30 @@ class Expression:
 		last_operator='+'
 		#coeff=0
 		for term in reduced:
-			#print "expressions term : ", 
+			print "expressions term : ", term
 			#if Number.isNumber(str(term[0].getAnswer()))==True:
 			if term not in ['+', '-']:
 				print term
-				for fac in term:
-					print fac
+				print term.getCoeff()
+				print "only factor : ", term.getWithoutCoeffFactor()
+				#for fac in term.getOnlyFactor():
+				#	print fac
 
 				coeff=term.getCoeff()
-				varlist=term.getVariables()
-				varst=str(varlist)
-				real_term=term
+				#varlist=term.getVariables()
+				#varst=str(varlist)
+				without_coeff_factor=term.getWithoutCoeffFactor()
+				#real_term=term
+				#print type(without_coeff_factor)
 				#for var in varlist:
 				#	varst+=str(var)
 				#	print varst
 				#print "in expression term : ", coeff, varst
-				if coeff_map.get(varst)==None:
-					coeff_map[varst]=[eval(last_operator+"1"), real_term]
+				if coeff_map.get(repr(without_coeff_factor))==None:
+					coeff_map[repr(without_coeff_factor)]=[eval(last_operator+repr(coeff)),without_coeff_factor]
 				else:
 					#coeff_map[varst]+=(eval(last_operator+str(coeff)), real_term)
-					coeff_map[varst][0]+=eval(last_operator+str(coeff))
+					coeff_map[repr(without_coeff_factor)][0]+=eval(last_operator+repr(coeff))
 			else:
 				last_operator=term
 
@@ -607,13 +624,31 @@ class Expression:
 		print "coeff_map : ", coeff_map	
 		
 
-		varlist=coeff_map.keys()
-		varlist.sort()
+		faclist=coeff_map.keys()
+		#faclist.sort()
+		faclist=ds.class_sort(faclist)
 		_reduced=[]
-		for var in varlist:
-			coeff=coeff_map[var][0]
-			real_term=coeff_map[var][1]
-			_reduced.append(Term([Number(coeff),real_term], ['*']))
+
+		for fac in faclist:
+			to_term=[]
+			to_term_ops=[]
+			coeff=coeff_map[fac][0]
+			real_factor=coeff_map[fac][1]
+			
+			to_term.append(Number(coeff))
+			if len(real_factor)>0:
+				to_term_ops.append('*')
+
+			for each_factor in real_factor:
+				#print type(each_factor)
+				if each_factor in ['*', '/']:
+					to_term_ops.append(each_factor)
+				else:
+					to_term.append(each_factor)
+
+			if len(_reduced)>0:
+				_reduced.append('+')
+			_reduced.append(Term(to_term, to_term_ops))
 
 
 		self.expressions=_reduced
@@ -700,6 +735,7 @@ class Expression:
 			else:
 				#print "now term in expressions : ", term
 				deri_term, deri_op = term.getDerivativeBy(by_variable)
+				print deri_term, deri_op
 				for each_term in deri_term:				
 					deri_terms.append(each_term)
 				for each_op in deri_op:
@@ -813,14 +849,15 @@ class Ast:
 
 
 	def getGradient(self):
-		#pass # Vector(tree, variable)
 		vec_list=[]
+		print "QWER",self.variables
 		for variable in self.variables:
 			vec_list.append(self.expression.getDerivativeBy(variable))
 		return Vector(vec_list)
 	
 	def getDirectionalDerivative(self, vector):
 		grad_vec=self.getGradient()
+		print "asdf", grad_vec
 		unit_vec=vector.getUnitVector()
 
 		if grad_vec.getDimension()!=unit_vec.getDimension():
@@ -849,7 +886,7 @@ if __name__ == "__main__":
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+cos(x)")
 	#tokens=tker.tokenize("x+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
@@ -861,7 +898,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("pow(2,sin(x))")
 	#tokens=tker.tokenize("log(e,1)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
-	tokens=tker.tokenize("2*x+3*x+x")
+	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
 	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")
 
 
@@ -875,19 +912,19 @@ if __name__ == "__main__":
 	print ast.setVariable("x", 2)
 	#print ast.setVariable("y", 3)
 	print ast.setVariable("z", 4)
-	#print ast.getAnswer()
+	print ast.getAnswer()
 	#print ast.isContinuous()
 	#print ast.getGradient()
-	print ast.getDirectionalDerivative(Vector(3,4))
+	#print ast.getDirectionalDerivative(Vector(3,4))
 
-	deri_ast = ast.getDerivativeBy('x')
-	print deri_ast
-	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
-	print deri_ast.getSettedVariables()
-	#print deri_ast.setVariable("x", 2)
-	print deri_ast.setVariable("y", 3)
-	print deri_ast.setVariable("z", 4)
-	print deri_ast.getAnswer()
+#	deri_ast = ast.getDerivativeBy('x')
+#	print deri_ast
+#	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
+#	print deri_ast.getSettedVariables()
+#	#print deri_ast.setVariable("x", 2)
+#	print deri_ast.setVariable("y", 3)
+#	print deri_ast.setVariable("z", 4)
+#	print deri_ast.getAnswer()
 
 '''
 tker=Tokenizer()
