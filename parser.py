@@ -231,9 +231,18 @@ class Negative(Factor):
 		else:
 			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
 			return "-%s" % self.factor
+	
+	def getName(self):
+		return self.factor.getName()
+	
+	def getCoeff(self):
+		return self.factor.getCoeff()*-1
 
+	def getWithoutCoeffFactor(self):
+		return self.factor.getWithoutCoeffFactor()
+	
 	def toString(self):
-		return self.factor.toString()
+		return '-'+self.factor.toString()
 
 	def getVariables(self):
 		return self.factor.getVariables()
@@ -671,7 +680,10 @@ class Expression:
 			coeff=coeff_map[fac][0]
 			real_factor=coeff_map[fac][1]
 			
-			to_term.append(Number(coeff))
+			minus_flag=False
+			if coeff<0:
+				minus_flag=True
+			to_term.append(Number(abs(coeff)))
 			if len(real_factor)>0:
 				to_term_ops.append('*')
 
@@ -683,7 +695,11 @@ class Expression:
 					to_term.append(each_factor)
 
 			if len(_reduced)>0:
-				_reduced.append('+')
+				if minus_flag==False:	
+					_reduced.append('+')
+	
+				else:
+					_reduced.append('-')
 			_reduced.append(Term(to_term, to_term_ops))
 
 
@@ -937,14 +953,16 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
-	tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
+	#tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(2,x)")
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	#tokens=tker.tokenize("pow(2,sin(x))")
+	#tokens=tker.tokenize("pow(x+x+4*x-y,2)")
+	#tokens=tker.tokenize("-y+2*x+x")
+	tokens=tker.tokenize("-sin(-2*x)-y-y")
 	#tokens=tker.tokenize("log(e,1)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
@@ -968,7 +986,7 @@ if __name__ == "__main__":
 
 	deri_ast = ast.getDerivativeBy('x')
 #	print deri_ast
-#	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
+	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
 #	print deri_ast.getSettedVariables()
 #	#print deri_ast.setVariable("x", 2)
 #	print deri_ast.setVariable("y", 3)
