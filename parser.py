@@ -683,7 +683,7 @@ class Expression:
 			minus_flag=False
 			if coeff<0:
 				minus_flag=True
-			to_term.append(Number(abs(coeff)))
+			to_term.append(Number(coeff))
 			if len(real_factor)>0:
 				to_term_ops.append('*')
 
@@ -693,13 +693,13 @@ class Expression:
 					to_term_ops.append(each_factor)
 				else:
 					to_term.append(each_factor)
+			#if minus_flag==True:
+			#	_reduced.append('-')
 
 			if len(_reduced)>0:
-				if minus_flag==False:	
+			#	if minus_flag==False:	
 					_reduced.append('+')
 	
-				else:
-					_reduced.append('-')
 			_reduced.append(Term(to_term, to_term_ops))
 
 
@@ -962,7 +962,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(x+x+4*x-y,2)")
 	#tokens=tker.tokenize("-y+2*x+x")
-	tokens=tker.tokenize("-sin(-2*x)-y-y")
+	tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
 	#tokens=tker.tokenize("log(e,1)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
