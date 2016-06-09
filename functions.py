@@ -28,7 +28,7 @@ class Function(Factor):
 		if self.param!=None:
 			return self.name+'('+self.param.toString()+')'
 		else:
-			return self.name+'('+self.base.toString()+self.exponential.toString()+')'
+			return self.name+'('+self.base.toString()+','+self.exponential.toString()+')'
 
 	def getVariables(self):
 		#print self.base, self.exponential

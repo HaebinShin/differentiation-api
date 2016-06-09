@@ -298,7 +298,7 @@ class Term:
 			
 		for i in range(len(self.factors)):
 			if self.factors[i].getType()=="function":
-				print self.factors[i]
+				print "function reduce : ", self.factors[i]
 				if self.factors[i].getName()=="log":
 					if self.factors[i].getBase().getType()=="number" and self.factors[i].getExponential().getType()=="number" and str(self.factors[i].getBase().getAnswer())==str(self.factors[i].getExponential().getAnswer()):
 						self.factors[i]=Number(1)
@@ -336,7 +336,7 @@ class Term:
 #					self.terms.append(factors[i+1])
 		
 	
-		print "now terms : ", reduced
+		print "\tnow terms : ", reduced
 
 		
 		#self.coeff=dict((key, value) for key, value in Counter(reduced).iteritems())
@@ -373,9 +373,9 @@ class Term:
 		multiply_variable=ds.class_sort(multiply_variable)
 		divide_variable=ds.class_sort(divide_variable)
 
-		print coeff
-		print multiply_variable
-		print divide_variable
+		print "\tin term coeff : ", coeff
+		print "\tmultiply_variable : ", multiply_variable
+		print "\tdivide_variable : ", divide_variable
 
 
 		_reduced=[]
@@ -420,8 +420,8 @@ class Term:
 		self.terms=_reduced
 		self.coeff=coeff	
 						
-		print "_reduced : ", self.terms
-		print "coeff : ", coeff
+		print "\t_reduced : ", self.terms
+		print "\tcoeff : ", coeff
 
 
 	#	self.terms=[]
@@ -498,7 +498,7 @@ class Term:
 	def getType(self):
 		_type=self.terms[0].getType()
 		for fac in self.terms:
-			if _type!=fac.getType():
+			if fac in ['*', '/'] or _type!=fac.getType():
 				_type="equation"
 		return _type
 
@@ -617,8 +617,8 @@ class Expression:
 			print "expressions term : ", term
 			#if Number.isNumber(str(term[0].getAnswer()))==True:
 			if term not in ['+', '-']:
-				print term
-				print term.getCoeff()
+				print "term : ",term
+				print "term coeff : ",term.getCoeff()
 				print "only factor : ", term.getWithoutCoeffFactor()
 				#for fac in term.getOnlyFactor():
 				#	print fac
@@ -627,25 +627,32 @@ class Expression:
 				#varlist=term.getVariables()
 				#varst=str(varlist)
 				without_coeff_factor=term.getWithoutCoeffFactor()
+				without_coeff_factor_term=None
 				facs=[]
 				ops=[]
-				for fac in without_coeff_factor:
-					if fac not in ['*','/']:
-						facs.append(fac)
-					else:
-						ops.append(fac)
-				without_coeff_factor_term=Term(facs, ops)
+				if len(without_coeff_factor)!=0:
+					for fac in without_coeff_factor:
+						if fac not in ['*','/']:
+							facs.append(fac)
+						else:
+							ops.append(fac)
+					without_coeff_factor_term=Term(facs, ops)
 				#real_term=term
 				#print type(without_coeff_factor)
 				#for var in varlist:
 				#	varst+=str(var)
 				#	print varst
 				#print "in expression term : ", coeff, varst
-				if coeff_map.get(without_coeff_factor_term.toString())==None:
-					coeff_map[without_coeff_factor_term.toString()]=[eval(last_operator+repr(coeff)),without_coeff_factor]
+				if without_coeff_factor_term==None:
+					key="NONE"
+				else:
+					key=without_coeff_factor_term.toString()
+
+				if coeff_map.get(key)==None:
+					coeff_map[key]=[eval(last_operator+repr(coeff)),without_coeff_factor]
 				else:
 					#coeff_map[varst]+=(eval(last_operator+str(coeff)), real_term)
-					coeff_map[without_coeff_factor_term.toString()][0]+=eval(last_operator+repr(coeff))
+					coeff_map[key][0]+=eval(last_operator+repr(coeff))
 			else:
 				last_operator=term
 
@@ -730,7 +737,7 @@ class Expression:
 	def getType(self):
 		_type=self.expressions[0].getType()
 		for term in self.expressions:
-			if _type!=term.getType():
+			if term in ['+', '-'] or _type!=term.getType():
 				_type="equation"
 		return _type
 
@@ -776,7 +783,7 @@ class Expression:
 			else:
 				#print "now term in expressions : ", term
 				deri_term, deri_op = term.getDerivativeBy(by_variable)
-				print deri_term, deri_op
+				#print deri_term, deri_op
 				for each_term in deri_term:				
 					deri_terms.append(each_term)
 				for each_op in deri_op:
@@ -930,11 +937,11 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
-	tokens=tker.tokenize("x+pow(2*x,2)")
+	tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(2,x)")
-	#tokens=tker.tokenize("x*z")
+	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(2,sin(x))")
@@ -959,14 +966,14 @@ if __name__ == "__main__":
 	#print ast.getGradient()
 	#print ast.getDirectionalDerivative(Vector(3,4))
 
-#	deri_ast = ast.getDerivativeBy('x')
+	deri_ast = ast.getDerivativeBy('x')
 #	print deri_ast
 #	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
 #	print deri_ast.getSettedVariables()
 #	#print deri_ast.setVariable("x", 2)
 #	print deri_ast.setVariable("y", 3)
 #	print deri_ast.setVariable("z", 4)
-#	print deri_ast.getAnswer()
+	print deri_ast.getAnswer()
 
 '''
 tker=Tokenizer()
