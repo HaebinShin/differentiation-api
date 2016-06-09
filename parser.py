@@ -274,6 +274,17 @@ class Paranthesis(Factor):
 	def getDerivativeBy(self, by_variable):
 		return self.expression.getDerivativeBy(by_variable)
 
+	def getWithoutCoeffFactor(self):
+		wcf=self.expression.getWithoutCoeffFactor()
+		if wcf!=False:
+			return wcf
+		else:
+			return False
+
+	def getCoeff(self):
+		return self.expression.getCoeff()
+
+
 	def canonicalize(self):
 		return self.expression.canonicalize()
 
@@ -457,10 +468,20 @@ class Term:
 		return reduced
 	
 	def getWithoutCoeffFactor(self):
+		if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
+			#print "!@$!#$!@#$!@#$!@#$!@#$"
+			wcf=self.only_factor_list[0].getWithoutCoeffFactor()
+			if wcf!=False:
+				return wcf
+			else:
+				return self.only_factor_list
+
 		return self.only_factor_list
 	
 		
 	def getCoeff(self):
+		if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
+			return self.only_factor_list[0].getCoeff()
 		return self.coeff
 
 
@@ -606,17 +627,25 @@ class Expression:
 				#varlist=term.getVariables()
 				#varst=str(varlist)
 				without_coeff_factor=term.getWithoutCoeffFactor()
+				facs=[]
+				ops=[]
+				for fac in without_coeff_factor:
+					if fac not in ['*','/']:
+						facs.append(fac)
+					else:
+						ops.append(fac)
+				without_coeff_factor_term=Term(facs, ops)
 				#real_term=term
 				#print type(without_coeff_factor)
 				#for var in varlist:
 				#	varst+=str(var)
 				#	print varst
 				#print "in expression term : ", coeff, varst
-				if coeff_map.get(repr(without_coeff_factor))==None:
-					coeff_map[repr(without_coeff_factor)]=[eval(last_operator+repr(coeff)),without_coeff_factor]
+				if coeff_map.get(without_coeff_factor_term.toString())==None:
+					coeff_map[without_coeff_factor_term.toString()]=[eval(last_operator+repr(coeff)),without_coeff_factor]
 				else:
 					#coeff_map[varst]+=(eval(last_operator+str(coeff)), real_term)
-					coeff_map[repr(without_coeff_factor)][0]+=eval(last_operator+repr(coeff))
+					coeff_map[without_coeff_factor_term.toString()][0]+=eval(last_operator+repr(coeff))
 			else:
 				last_operator=term
 
@@ -676,6 +705,18 @@ class Expression:
 				reduced.append(terms[i+1])
 		return reduced
 		
+	def getWithoutCoeffFactor(self):
+		if len(self.expressions)==1:
+			return self.expressions[0].getWithoutCoeffFactor()
+		else:
+			return False
+
+	def getCoeff(self):
+		if len(self.expressions)!=1:
+			return 1
+		else:
+			return self.expressions[0].getCoeff()
+	
 
 	def toString(self):
 		string=""
@@ -886,9 +927,10 @@ if __name__ == "__main__":
 	from tokenizer import Tokenizer
 
 	tker=Tokenizer()
-	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
-	#tokens=tker.tokenize("x+pow(2*x,2)")
+	tokens=tker.tokenize("x+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
 	#tokens=tker.tokenize("x+y+sin(x+sin(z))")
 	#tokens=tker.tokenize("1+2+pow(2,x)")

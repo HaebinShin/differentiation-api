@@ -1,7 +1,7 @@
 def class_sort(class_list):
 	tostring_list=[]
 	for now in class_list:
-		print now
+		#print now
 		tostring_list.append(str(now))
 	tostring_list.sort()
 
