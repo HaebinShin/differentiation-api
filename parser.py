@@ -100,6 +100,7 @@ class Factor:
 	
 	def getType(self):
 		return self.__type
+
 		
 class Variable(Factor):
 	def __init__(self, variable):
@@ -232,6 +233,17 @@ class Negative(Factor):
 			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
 			return "-%s" % self.factor
 	
+	def getBase(self):
+		#print self.factor.getType(), self.factor.getName()
+		if self.factor.getType()=="function" and (self.factor.getName()=="pow" or self.factor.getName()=="log"):
+			return self.factor.getBase()
+		return None
+	
+	def getExponential(self):
+		if self.factor.getType()=="function" and (self.factor.getName()=="pow" or self.factor.getName()=="log"):
+			return self.factor.getExponential()
+		return None
+
 	def getName(self):
 		return self.factor.getName()
 	
@@ -314,6 +326,7 @@ class Term:
 					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==1:
 						self.factors[i]=Number(0)
 				elif self.factors[i].getName()=="pow":
+					print self.factors[i].getBase()
 					if self.factors[i].getBase().getType()=="number" and self.factors[i].getBase().getAnswer()==0:
 						self.factors[i]=Number(0)
 					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==0:
@@ -960,9 +973,9 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	#tokens=tker.tokenize("pow(x+x+4*x-y,2)")
+	tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
 	#tokens=tker.tokenize("-y+2*x+x")
-	tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
+	#tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
 	#tokens=tker.tokenize("log(e,1)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
