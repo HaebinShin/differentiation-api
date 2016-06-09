@@ -395,11 +395,12 @@ class Term:
 #					_reduced.append(divide_variable[div_idx])
 #					div_idx+=1
 #
-		print "_reduced : ", _reduced
 	
 		self.terms=_reduced
 		self.coeff=coeff	
 						
+		print "_reduced : ", self.terms
+		print "coeff : ", coeff
 
 
 	#	self.terms=[]
@@ -483,7 +484,7 @@ class Term:
 		variables=set([])
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				print factor
+				#print factor
 				var=factor.getVariables()
 				if var!=None:
 					for now in var:
@@ -574,25 +575,49 @@ class Expression:
 
 
 		coeff_map={}
-		plus_variable=[]
-		minus_variable=[]
+		plus_factors=[]
+		minus_factors=[]
 		last_operator='+'
-		coeff=0
+		#coeff=0
 		for term in reduced:
 			#print "expressions term : ", 
 			#if Number.isNumber(str(term[0].getAnswer()))==True:
 			if term not in ['+', '-']:
+				print term
+				for fac in term:
+					print fac
+
 				coeff=term.getCoeff()
-				print term.getVariables()
-				if coeff_map.get(str(term.getVariables().sort()))==None:
-					coeff_map[term.toString()]=1
+				varlist=term.getVariables()
+				varst=str(varlist)
+				real_term=term
+				#for var in varlist:
+				#	varst+=str(var)
+				#	print varst
+				#print "in expression term : ", coeff, varst
+				if coeff_map.get(varst)==None:
+					coeff_map[varst]=[eval(last_operator+"1"), real_term]
 				else:
-					coeff_map[term.toString()]+=coeff
-			
+					#coeff_map[varst]+=(eval(last_operator+str(coeff)), real_term)
+					coeff_map[varst][0]+=eval(last_operator+str(coeff))
+			else:
+				last_operator=term
 
 
 		print "coeff_map : ", coeff_map	
-		self.expressions=reduced
+		
+
+		varlist=coeff_map.keys()
+		varlist.sort()
+		_reduced=[]
+		for var in varlist:
+			coeff=coeff_map[var][0]
+			real_term=coeff_map[var][1]
+			_reduced.append(Term([Number(coeff),real_term], ['*']))
+
+
+		self.expressions=_reduced
+		print "expressions : ", self.expressions
 
 	def __str__(self):
 		return "%s" % self.expressions
@@ -835,7 +860,8 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("pow(2,sin(x))")
 	#tokens=tker.tokenize("log(e,1)")
-	tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
+	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
+	tokens=tker.tokenize("2*x+3*x+x")
 	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")
 
 
