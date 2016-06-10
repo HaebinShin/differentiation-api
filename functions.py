@@ -126,6 +126,10 @@ class Cos(Function):
 		factors.append(Sin(self.param))
 		ops.append('*')
 		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		aa=Paranthesis(self.param.getDerivativeBy(by_variable))
+		print "asdf",aa 
+		a=Paranthesis(Expression([Term(factors,ops)], []))
+		print "asdf ",a
 		return Paranthesis(Expression([Term(factors,ops)], []))
 		#return Term(factors,ops)
 

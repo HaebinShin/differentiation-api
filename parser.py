@@ -56,7 +56,10 @@ class Parser:
 			fac = self.takeFactor(tokens)
 			#tokens.popFront()
 			#return Factor(['-',fac], "negative")
-			return Negative(fac)
+			#return Negative(fac)
+			term=Term([Number(-1),fac],['*'])
+			expr=Expression([term],[])
+			return Paranthesis(expr)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
 			self.functions.add(now)
@@ -100,6 +103,9 @@ class Factor:
 	
 	def getType(self):
 		return self.__type
+	
+	def getCoeff(self):
+		return 1
 
 		
 class Variable(Factor):
@@ -114,6 +120,9 @@ class Variable(Factor):
 
 	def __repr__(self):
 		return "%s" % self.variable
+
+	def getCoeff(self):
+		return 1
 
 	def toString(self):
 		return self.variable
@@ -167,6 +176,9 @@ class Number(Factor):
 			return "pi"
 		else:
 			return "%s" % self.number
+	
+	def getCoeff(self):
+		return self.getAnswer()
 
 	def toString(self):
 		return str(self.number)
@@ -502,9 +514,14 @@ class Term:
 	
 		
 	def getCoeff(self):
-		if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
-			return self.only_factor_list[0].getCoeff()
-		return self.coeff
+		#if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
+		#	return self.only_factor_list[0].getCoeff()
+		#print "self : ", self.only_factor_list
+		if len(self.only_factor_list)==0:
+			#print "12341234", self.coeff
+			return self.coeff
+		else:
+			return self.terms[0].getCoeff()
 
 
 	def toString(self):
@@ -581,10 +598,10 @@ class Term:
 					else:
 						deri_factors.append(Pow(self.factors[j+1], Number(-1)))
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
-		
+			
 		#return Expression(deri_terms, deri_terms_ops)
-		#print "deri_terms : ",deri_terms
-		#print "deri_terms_ops : ",deri_terms_ops
+		print "deri_terms : ",deri_terms
+		print "deri_terms_ops : ",deri_terms_ops
 		return deri_terms, deri_terms_ops
 
 	def canonicalize(self):
@@ -961,7 +978,7 @@ class Ast:
 if __name__ == "__main__":
 
 	from tokenizer import Tokenizer
-
+	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
@@ -973,9 +990,11 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
+	#tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
+	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
-	#tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
+	#tokens=tker.tokenize("x--x")
+	tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
 	#tokens=tker.tokenize("log(e,1)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
@@ -998,7 +1017,7 @@ if __name__ == "__main__":
 	#print ast.getDirectionalDerivative(Vector(3,4))
 
 	deri_ast = ast.getDerivativeBy('x')
-#	print deri_ast
+	print deri_ast
 	print "AASDFASDFSADFSDFSDFSFD", deri_ast.toString()
 #	print deri_ast.getSettedVariables()
 #	#print deri_ast.setVariable("x", 2)
