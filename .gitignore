@@ -1,3 +1,7 @@
+*.png
+*.jpg
+*.jpeg
+*.pdf
 *.py~
 *.pyc
 .*.*.swp

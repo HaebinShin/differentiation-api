@@ -2,6 +2,7 @@ from tokenizer import Tokenizer
 from parser import Parser
 import matplotlib.pyplot as plt
 from numpy import arange
+from sympy import latex, sympify
 class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
@@ -141,21 +142,38 @@ class Formula:
 			terms_ops.append('+')
 		return Formula(Expression(terms, terms_ops))
 
-	def plot(self, start, end):
+	def getPlot(self, start, end):
 		var_cnt=len(self.variables)
 		xs=[]
 		ys=[]
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in arange(start, end, 0.001):
+		for x in numpy.arange(start, end, 0.001):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			y=self.getAnswer()
 			xs.append(x)
 			ys.append(y)
 		plt.plot(xs, ys)
+		plt.savefig('
 		plt.show()
 				
+	
+	def getLatex(self):
+		latex_string=latex(sympify(self.toString()))
+		print "latex : ", latex_string
+		
+		#preview(r'$%s$' % latex_string, viewer='file', filename='latex.png', euler=False)
+		#plt.text(0,0,r"$%s$" % latex_string, fontsize=60)
+		#fig=plt.gca()
+		#fig.axes.get_xaxis().set_visible(False)
+		#fig.axes.get_yaxis().set_visible(False)
+		#plt.savefig('latex.png')
+		
+		fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+		ax.text(0,0,r"$%s$" % latex_string, fontsize=60)
+		fig.savefig('latex.png')   # save the figure to file
+		plt.close(fig)    # close the figure
 			
 			
 
@@ -208,7 +226,8 @@ if __name__ == "__main__":
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
-	formula.plot(-50.3,50.3)
+	#formula.getPlot(-50.3,50.3)
+	formula.getLatex()
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
@@ -221,7 +240,8 @@ if __name__ == "__main__":
 #	print deri_formula.setVariable("y", 3)
 #	print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
-	deri_formula.plot(-50.3, 50.3)
+	formula.getLatex()
+	#deri_formula.getPlot(-50.3, 50.3)
 
 '''
 tker=Tokenizer()
