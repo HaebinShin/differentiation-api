@@ -50,6 +50,12 @@ class Parser:
 			#return Factor(['(',exp,')'],"paranthesis")
 			#return exp	
 			return Paranthesis(exp)
+		#elif re.match("\d*\.\d+|\d+", now)!=None:
+		elif Number.isNumber(now)==True:
+			tokens.popFront()
+			#return Factor(now, "number")
+			#return Number(now)
+			return Number.determine(now)
 		elif now == '-':
 			tokens.popFront()
 			#fac = tokens.front()
@@ -81,12 +87,6 @@ class Parser:
 			exp2 = self.takeExpression(tokens)
 			tokens.popFront()
 			return Function.determine(now, base=exp1, exponential=exp2)
-		#elif re.match("\d*\.\d+|\d+", now)!=None:
-		elif Number.isNumber(now)==True:
-			tokens.popFront()
-			#return Factor(now, "number")
-			#return Number(now)
-			return Number.determine(now)
 		else:
 			#self.variables.add(now)
 			tokens.popFront()
@@ -95,7 +95,8 @@ class Parser:
 
 
 class Factor:
-	def __init__(self, __type):
+	def __init__(self, param, __type):
+		self.param=param
 		self.__type=__type
 
 	def setVarable(self):
@@ -106,11 +107,14 @@ class Factor:
 	
 	def getCoeff(self):
 		return 1
+	
+	def getWithoutCoeffFactor(self):
+		return []
 
 		
 class Variable(Factor):
 	def __init__(self, variable):
-		Factor.__init__(self, "variable")
+		Factor.__init__(self, variable, "variable")
 		self.variable=variable
 
 		self.value=None
@@ -153,7 +157,7 @@ class Variable(Factor):
 
 class Number(Factor):
 	def __init__(self, number):
-		Factor.__init__(self, "number")
+		Factor.__init__(self, number, "number")
 		self.number=number
 		
 
@@ -221,7 +225,7 @@ class Number(Factor):
 
 class Negative(Factor):
 	def __init__(self, factor):
-		Factor.__init__(self, factor.getType())
+		Factor.__init__(self, factor, factor.getType())
 		self.factor=factor
 
 	def getAnswer(self):
@@ -283,7 +287,7 @@ class Negative(Factor):
 
 class Paranthesis(Factor):
 	def __init__(self, expression):
-		Factor.__init__(self, "paranthesis")
+		Factor.__init__(self, expression, "paranthesis")
 		self.expression=expression
 
 	def getAnswer(self):
@@ -296,7 +300,7 @@ class Paranthesis(Factor):
 		return "(%s)" % self.expression
 
 	def toString(self):
-		return self.expression.toString()
+		return '('+self.expression.toString()+')'
 
 	def getVariables(self):
 		return self.expression.getVariables()
@@ -308,14 +312,16 @@ class Paranthesis(Factor):
 		return self.expression.getDerivativeBy(by_variable)
 
 	def getWithoutCoeffFactor(self):
-		wcf=self.expression.getWithoutCoeffFactor()
-		if wcf!=False:
-			return wcf
-		else:
-			return False
+		#wcf=self.expression.getWithoutCoeffFactor()
+		#if wcf!=False:
+		#	return wcf
+		#else:
+		#	return False
+		return self.expression
 
 	def getCoeff(self):
-		return self.expression.getCoeff()
+		#return self.expression.getCoeff()
+		return 1
 
 
 	def canonicalize(self):
@@ -502,13 +508,12 @@ class Term:
 		return reduced
 	
 	def getWithoutCoeffFactor(self):
-		if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
-			#print "!@$!#$!@#$!@#$!@#$!@#$"
-			wcf=self.only_factor_list[0].getWithoutCoeffFactor()
-			if wcf!=False:
-				return wcf
-			else:
-				return self.only_factor_list
+		#if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
+			#wcf=self.only_factor_list[0].getWithoutCoeffFactor()
+			#if wcf!=False:
+			#	return wcf
+			#else:
+			#	return self.only_factor_list
 
 		return self.only_factor_list
 	
@@ -517,11 +522,25 @@ class Term:
 		#if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":
 		#	return self.only_factor_list[0].getCoeff()
 		#print "self : ", self.only_factor_list
+		
+		
+		# if only_factor_list is empty: 1(self.coeff)
+		# else: 
+		#    number must be front 
+		# if front is number: return that number (self.terms[0].getCoeff())
+		# elif front is factor which contain number: return 1(self.coeff)
+
 		if len(self.only_factor_list)==0:
 			#print "12341234", self.coeff
 			return self.coeff
 		else:
-			return self.terms[0].getCoeff()
+			#if len(self.terms[0].getWithoutCoeffFactor())==0:
+				print "\t\tfactor coeff 1 : ", self.terms[0].getCoeff()
+				return self.terms[0].getCoeff()
+			#else:
+				print "\t\tfactor coeff 2 : ", self.terms[0].getCoeff()
+				return self.terms[0].getCoeff()
+
 
 
 	def toString(self):
@@ -656,9 +675,6 @@ class Expression:
 			print "expressions term : ", term
 			#if Number.isNumber(str(term[0].getAnswer()))==True:
 			if term not in ['+', '-']:
-				print "term : ",term
-				print "term coeff : ",term.getCoeff()
-				print "only factor : ", term.getWithoutCoeffFactor()
 				#for fac in term.getOnlyFactor():
 				#	print fac
 
@@ -666,6 +682,9 @@ class Expression:
 				#varlist=term.getVariables()
 				#varst=str(varlist)
 				without_coeff_factor=term.getWithoutCoeffFactor()
+				print "term : ",term
+				print "term coeff : ",coeff
+				print "term without coeff factor : ", without_coeff_factor
 				without_coeff_factor_term=None
 				facs=[]
 				ops=[]
@@ -765,10 +784,10 @@ class Expression:
 			return False
 
 	def getCoeff(self):
-		if len(self.expressions)!=1:
-			return 1
-		else:
+		if len(self.expressions)==1:
 			return self.expressions[0].getCoeff()
+		else:
+			return 1
 	
 
 	def toString(self):
@@ -981,7 +1000,7 @@ if __name__ == "__main__":
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
-	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
 	#tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
@@ -994,8 +1013,9 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
-	tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
-	#tokens=tker.tokenize("log(e,1)")
+	#tokens=tker.tokenize("x*(x*y*-3+x*y)")
+	#tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
+	#tokens=tker.tokenize("log(e,e)")
 	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
 	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")

@@ -5,7 +5,7 @@ from parser import *
 
 class Function(Factor):
 	def __init__(self, name=None, param=None, base=None, exponential=None):
-		Factor.__init__(self, "function")
+		Factor.__init__(self, param, "function")
 		self.name=name
 		self.param=param
 		self.base=base
