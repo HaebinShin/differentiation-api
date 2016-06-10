@@ -1,6 +1,8 @@
 from math import sin, cos, tan, exp, log, e
 from regex import Regex
-from parser import *
+from factor import *
+from term import Term
+from expression import Expression
 #import regex as Regex
 
 class Function(Factor):
