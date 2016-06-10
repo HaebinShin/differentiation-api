@@ -1,5 +1,7 @@
 from tokenizer import Tokenizer
 from parser import Parser
+import matplotlib.pyplot as plt
+from numpy import arange
 class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
@@ -139,6 +141,24 @@ class Formula:
 			terms_ops.append('+')
 		return Formula(Expression(terms, terms_ops))
 
+	def plot(self, start, end):
+		var_cnt=len(self.variables)
+		xs=[]
+		ys=[]
+		if var_cnt>1:
+			return "error - it's not one variable function"
+		for x in arange(start, end, 0.001):
+			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
+				return "error"
+			y=self.getAnswer()
+			xs.append(x)
+			ys.append(y)
+		plt.plot(xs, ys)
+		plt.show()
+				
+			
+			
+
 
 
 if __name__ == "__main__":
@@ -154,7 +174,7 @@ if __name__ == "__main__":
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
-	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
+	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
 	#tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
 	#tokens=tker.tokenize("1--(y*(x-z))")
@@ -170,7 +190,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("x*(x*y*-3+x*y)")
 	#tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
 	#tokens=tker.tokenize("log(e,e)")
-	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
+	tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
 	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")
 
@@ -181,13 +201,14 @@ if __name__ == "__main__":
 	p=Parser()
 	expr = p.parse(tokens)
 
-	formula=Formula("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
+	formula=Formula(expr)
 	print formula
 	print "AASDFASDFSADFSDFSDFSFD", formula.toString()
 	print formula.setVariable("x", 2)
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
+	formula.plot(-50.3,50.3)
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
@@ -200,6 +221,7 @@ if __name__ == "__main__":
 #	print deri_formula.setVariable("y", 3)
 #	print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
+	deri_formula.plot(-50.3, 50.3)
 
 '''
 tker=Tokenizer()
