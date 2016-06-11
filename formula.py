@@ -1,5 +1,7 @@
 from tokenizer import Tokenizer
 from parser import Parser
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from numpy import arange
 from sympy import latex, sympify, preview
@@ -156,6 +158,7 @@ class Formula:
 			y=self.getAnswer()
 			xs.append(x)
 			ys.append(y)
+		print "plot"
 		plt.plot(xs, ys)
 		plt.savefig(file_name)
 		plt.close()
@@ -167,7 +170,7 @@ class Formula:
 		latex_string=latex(sympify(self.toString()))
 		print "latex : ", latex_string
 		
-		preview('$%s$' % latex_string, viewer='file', filename=file_name, euler=False)
+		preview(r"$%s$" % latex_string, viewer='file', filename=file_name, euler=False)
 		#preview(sympify(self.toString()), output='png')
 		#plt.text(0,0,r"$%s$" % latex_string, fontsize=60)
 		#fig=plt.gca()
@@ -207,7 +210,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
+	tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
 	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
@@ -232,7 +235,7 @@ if __name__ == "__main__":
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
-	formula.getPlot(-50.3,50.3, 'plot.png')
+	formula.getPlot(-1.3,1.3, 'plot.png')
 	formula.getLatex('latex.png')
 	#print formula.isContinuous()
 	#print formula.getGradient()
@@ -247,7 +250,7 @@ if __name__ == "__main__":
 #	print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
 	deri_formula.getPlot(-0.3, 0.3, 'deri_plot.png')
-	deri_formula.getLatex('deri_latex.png')
+	#deri_formula.getLatex('deri_latex.png')
 
 '''
 tker=Tokenizer()
