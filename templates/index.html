@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>differentiation demo</title>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<div class="container">
+			{% include 'input.html' %}
+			{% if formula %}
+				{% include 'result.html' %}
+			{% endif %}
+		</div>
+	</body>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="/static/jquery.jslatex.packed.js"></script>
+
+	<script>
+		$(function () {
+			$(".latex").latex();
+		});
+	</script>
+</html>

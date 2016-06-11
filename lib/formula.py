@@ -3,12 +3,18 @@ from parser import Parser
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from numpy import arange
-from sympy import latex, sympify, preview
+import numpy as np
+import sympy as sp
+import latex2mathml as l2m
+#from numpy import arange
+#from sympy import latex, sympify, preview
+
+
+import requests
 class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
-		if type(expression)==str:
+		if type(expression)==str or type(expression)==unicode:
 			tknr=Tokenizer()
 			tokens=tknr.tokenize(expression)
 
@@ -152,7 +158,7 @@ class Formula:
 		ys=[]
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in arange(start, end, 0.001):
+		for x in np.arange(start, end, 0.001):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			y=self.getAnswer()
@@ -167,12 +173,13 @@ class Formula:
 	def getLatex(self, file_name=None):
 		if file_name==None:
 			file_name='latex.png'
-		latex_string=latex(sympify(self.toString()))
+		latex_string=sp.latex(sp.sympify(self.toString()))
+		return latex_string
 		print "latex : ", latex_string
 		
 		preview(r"$%s$" % latex_string, viewer='file', filename=file_name, euler=False)
 		#preview(sympify(self.toString()), output='png')
-		#plt.text(0,0,r"$%s$" % latex_string, fontsize=60)
+		#plt.text(0,0,r"$%s$" % latex_string, fontsize=15)
 		#fig=plt.gca()
 		#fig.axes.get_xaxis().set_visible(False)
 		#fig.axes.get_yaxis().set_visible(False)
@@ -184,8 +191,20 @@ class Formula:
 		#fig.savefig('latex.png')   # save the figure to file
 		#plt.close(fig)    # close the figure
 			
-			
+	def latex(self, file_name=None):
+		
+		if file_name==None:
+			file_name='latex.png'
+		latex_string=latex(sympify(self.toString()))
+		r = requests.get( 'http://latex.codecogs.com/png.latex?\dpi{300} \huge %s' % latex_string )
+		f = open( file_name, 'wb' )
+		f.write( r.content )
+		f.close()
 
+	def getMathML(self):
+		latex_string=sp.latex(sp.sympify(self.toString()))
+		math_ml=l2m.convert(latex_string)
+		return math_ml
 
 
 if __name__ == "__main__":
@@ -209,8 +228,8 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1+2+pow(2,x)")
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
-	#tokens=tker.tokenize("y+log(2, x)")
-	tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
+	tokens=tker.tokenize("y+log(2, x)")
+	#tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
 	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
@@ -236,7 +255,8 @@ if __name__ == "__main__":
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
 	formula.getPlot(-1.3,1.3, 'plot.png')
-	formula.getLatex('latex.png')
+	#formula.getLatex('latex.png')
+	print formula.getMathML()
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
