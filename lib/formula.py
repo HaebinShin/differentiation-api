@@ -10,7 +10,6 @@ import latex2mathml as l2m
 #from sympy import latex, sympify, preview
 
 
-import requests
 class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
@@ -150,9 +149,7 @@ class Formula:
 			terms_ops.append('+')
 		return Formula(Expression(terms, terms_ops))
 
-	def getPlot(self, start, end, file_name=None):
-		if file_name==None:
-			file_name='plot.png'
+	def getPlotImage(self, start, end, file_name):
 		var_cnt=len(self.variables)
 		xs=[]
 		ys=[]
@@ -164,15 +161,16 @@ class Formula:
 			y=self.getAnswer()
 			xs.append(x)
 			ys.append(y)
-		print "plot"
+		print "plot2"
 		plt.plot(xs, ys)
 		plt.savefig(file_name)
 		plt.close()
+		return True
 				
 	
-	def getLatex(self, file_name=None):
-		if file_name==None:
-			file_name='latex.png'
+	def getLatexString(self):
+		#if file_name==None:
+		#	file_name='latex.png'
 		latex_string=sp.latex(sp.sympify(self.toString()))
 		return latex_string
 		print "latex : ", latex_string
@@ -254,7 +252,7 @@ if __name__ == "__main__":
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
-	formula.getPlot(-1.3,1.3, 'plot.png')
+	#formula.getPlotImage(-1.3,1.3, 'plot.png')
 	#formula.getLatex('latex.png')
 	print formula.getMathML()
 	#print formula.isContinuous()
@@ -269,7 +267,7 @@ if __name__ == "__main__":
 #	print deri_formula.setVariable("y", 3)
 #	print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
-	deri_formula.getPlot(-0.3, 0.3, 'deri_plot.png')
+	#deri_formula.getPlotImage(-0.3, 0.3, 'deri_plot.png')
 	#deri_formula.getLatex('deri_latex.png')
 
 '''

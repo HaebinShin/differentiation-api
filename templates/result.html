@@ -4,7 +4,7 @@
 			<h3 class='panel-title'>Formula String</h3>
 		</div>
 		<div class='panel-body'>
-			{{ formula }}
+			{{ formula.toString() }}
 		</div>
 	</div>
 	<div class='panel panel-success'>
@@ -13,8 +13,28 @@
 		</div>
 		<div class='panel-body'>
 			<div class='latex'>
-				{{ formula }}
+				{{ formula.getLatexString() }}
 			</div>
+		</div>
+	</div>
+	<div class='panel panel-success'>
+		<div class='panel-heading'>
+			<h3 class='panel-title'>Formula Plot</h3>
+		</div>
+		<div class='panel-body'>
+			{% if plot!=None %}
+			<script>
+				src='/static/plot.png?'+(new Date()).getTime();
+				document.write("<img src="+src+" width=500px height=400px>");
+			</script>
+			{% endif %}
+			{% if deri_plot!=None %}
+			<script>
+				d_src='/static/deri_plot.png?'+(new Date()).getTime();
+				document.write("<img src="+d_src+" width=500px height=400px>");
+			</script>
+			{% endif %}
+
 		</div>
 	</div>
 	<div class='panel panel-success'>
@@ -22,7 +42,9 @@
 			<h3 class='panel-title'>Derivative String</h3>
 		</div>
 		<div class='panel-body'>
-			{{ formula }}
+			{% for now_formula in deri_formulas %}
+			<p>{{ now_formula.toString() }}</p>
+			{% endfor %}
 		</div>
 	</div>
 	<div class='panel panel-success'>
