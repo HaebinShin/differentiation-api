@@ -2,7 +2,7 @@ from tokenizer import Tokenizer
 from parser import Parser
 import matplotlib.pyplot as plt
 from numpy import arange
-from sympy import latex, sympify
+from sympy import latex, sympify, preview
 class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
@@ -142,38 +142,44 @@ class Formula:
 			terms_ops.append('+')
 		return Formula(Expression(terms, terms_ops))
 
-	def getPlot(self, start, end):
+	def getPlot(self, start, end, file_name=None):
+		if file_name==None:
+			file_name='plot.png'
 		var_cnt=len(self.variables)
 		xs=[]
 		ys=[]
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in numpy.arange(start, end, 0.001):
+		for x in arange(start, end, 0.001):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			y=self.getAnswer()
 			xs.append(x)
 			ys.append(y)
 		plt.plot(xs, ys)
-		plt.savefig('
-		plt.show()
+		plt.savefig(file_name)
+		plt.close()
 				
 	
-	def getLatex(self):
+	def getLatex(self, file_name=None):
+		if file_name==None:
+			file_name='latex.png'
 		latex_string=latex(sympify(self.toString()))
 		print "latex : ", latex_string
 		
-		#preview(r'$%s$' % latex_string, viewer='file', filename='latex.png', euler=False)
+		preview('$%s$' % latex_string, viewer='file', filename=file_name, euler=False)
+		#preview(sympify(self.toString()), output='png')
 		#plt.text(0,0,r"$%s$" % latex_string, fontsize=60)
 		#fig=plt.gca()
 		#fig.axes.get_xaxis().set_visible(False)
 		#fig.axes.get_yaxis().set_visible(False)
-		#plt.savefig('latex.png')
+		#plt.savefig(file_name)
+		#plt.close()
 		
-		fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
-		ax.text(0,0,r"$%s$" % latex_string, fontsize=60)
-		fig.savefig('latex.png')   # save the figure to file
-		plt.close(fig)    # close the figure
+		#fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
+		#ax.text(0,0,r"$%s$" % latex_string, fontsize=60)
+		#fig.savefig('latex.png')   # save the figure to file
+		#plt.close(fig)    # close the figure
 			
 			
 
@@ -201,14 +207,14 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
-	#tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
+	tokens=tker.tokenize("-(pow(x+x+4*x-y,2))")
 	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
 	#tokens=tker.tokenize("x*(x*y*-3+x*y)")
 	#tokens=tker.tokenize("x+-cos(-2*x)-y-y-2*y")
 	#tokens=tker.tokenize("log(e,e)")
-	tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
+	#tokens=tker.tokenize("2*x+sin(3*x+4*x)+x+x")
 	#tokens=tker.tokenize("2*x+3*x+y+1/2*x")
 	#tokens=tker.tokenize("2/z*x/3*y+x/y*z+z/y*x")
 
@@ -226,8 +232,8 @@ if __name__ == "__main__":
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
-	#formula.getPlot(-50.3,50.3)
-	formula.getLatex()
+	formula.getPlot(-50.3,50.3, 'plot.png')
+	formula.getLatex('latex.png')
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
@@ -240,8 +246,8 @@ if __name__ == "__main__":
 #	print deri_formula.setVariable("y", 3)
 #	print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
-	formula.getLatex()
-	#deri_formula.getPlot(-50.3, 50.3)
+	deri_formula.getPlot(-0.3, 0.3, 'deri_plot.png')
+	deri_formula.getLatex('deri_latex.png')
 
 '''
 tker=Tokenizer()
