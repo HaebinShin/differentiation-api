@@ -20,6 +20,8 @@ def index():
 			#string=f.toString()
 			#latex=f.getLatexString()
 			df_list=[]
+			if len(f.getVariables())==0:
+				df_list.append(f.getDerivativeBy("None"))
 			for var in f.getVariables():
 				df=f.getDerivativeBy(var)
 				df_list.append(df)
