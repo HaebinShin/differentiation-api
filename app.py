@@ -18,7 +18,7 @@ def index():
 	else:
 		input_formula=request.form['formula']
 
-		os.system('rm static/*.png > /dev/null')
+		os.system('rm static/*.png 2>/dev/null')
 
 
 		try:
@@ -35,11 +35,11 @@ def index():
 			if len(df_list)<=1:
 				plot=f.getPlotImage(0,2,'plot.png')
 				if plot==True:
-					os.system('mv plot.png static/ > /dev/null')
+					os.system('mv plot.png static/ 2>/dev/null')
 				if len(df_list)==1:
 					deri_plot=df_list[0].getPlotImage(0,2,'deri_plot.png')
 					if deri_plot==True:
-						os.system('mv deri_plot.png static/ > /dev/null')
+						os.system('mv deri_plot.png static/ 2>/dev/null')
 			
 
 			return render_template('index.html', formula=f, deri_formulas=df_list, plot=plot, deri_plot=deri_plot)

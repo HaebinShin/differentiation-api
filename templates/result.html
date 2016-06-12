@@ -1,53 +1,75 @@
 <div class="row">
 	<div class='panel panel-success'>
 		<div class='panel-heading'>
-			<h3 class='panel-title'>Formula String</h3>
+			<h3 class='panel-title'>String</h3>
 		</div>
-		<div class='panel-body'>
-			{{ formula.toString() }}
-		</div>
-	</div>
-	<div class='panel panel-success'>
-		<div class='panel-heading'>
-			<h3 class='panel-title'>Formula Math Format</h3>
-		</div>
-		<div class='panel-body'>
-			<div class='latex'>
-				{{ formula.getLatexString() }}
-			</div>
-		</div>
-	</div>
-	<div class='panel panel-success'>
-		<div class='panel-heading'>
-			<h3 class='panel-title'>Formula Plot</h3>
-		</div>
-		<div class='panel-body'>
+		<!--<div class='panel-body'>
 			<div><label>Original :</label></div>
-			{% if plot!=None %}
-			<div><script>
-				src='/static/plot.png?'+(new Date()).getTime();
-				document.write("<img src="+src+" width=500px height=400px>");
-			</script></div>
-			{% endif %}
+			{{ formula.toString() }}
 			<div><label>Derivative :</label></div>
-			{% if deri_plot!=None %}
-			<div><script>
-				d_src='/static/deri_plot.png?'+(new Date()).getTime();
-				document.write("<img src="+d_src+" width=500px height=400px>");
-			</script></div>
-			{% endif %}
-
-		</div>
-	</div>
-	<div class='panel panel-success'>
-		<div class='panel-heading'>
-			<h3 class='panel-title'>Derivative String</h3>
-		</div>
-		<div class='panel-body'>
 			{% for now_formula in deri_formulas %}
 			<p>{{ now_formula.toString() }}</p>
 			{% endfor %}
+		</div>-->
+		<ul class='list-group'>
+			<li class='list-group-item'>
+				<div><label>Original :</label></div>
+				<div class='list-group-item-result'>{{ formula.toString() }}	</div>
+			</li>
+			<li class='list-group-item'>	
+				<div><label>Derivative :</label></div>
+				{% for now_formula in deri_formulas %}
+				<div class='list-group-item-result'>{{ now_formula.toString() }}</div>
+				{% endfor %}
+			</li>
+		</ul>
+	</div>
+	<div class='panel panel-success'>
+		<div class='panel-heading'>
+			<h3 class='panel-title'>Math Format</h3>
 		</div>
+		<ul class='list-group'>
+			<li class='list-group-item'>
+				<div><label>Original :</label></div>
+				<div class='latex list-group-item-result'>
+					{{ formula.getLatexString() }}
+				</div>
+			</li>
+			<li class='list-group-item'>
+				<div><label>Derivative :</label></div>
+				<div class='latex list-group-item-result'>
+					{% for now_formula in deri_formulas %}
+					<p>{{ now_formula.getLatexString() }}</p>
+					{% endfor %}
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class='panel panel-success'>
+		<div class='panel-heading'>
+			<h3 class='panel-title'>Plot</h3>
+		</div>
+		<ul class='list-group'>
+			<li class='list-group-item'>
+				<div><label>Original :</label></div>
+				{% if plot!=None %}
+				<div><script>
+					src='/static/plot.png?'+(new Date()).getTime();
+					document.write("<img src="+src+" width=500px height=400px>");
+				</script></div>
+				{% endif %}
+			</li>
+			<li class='list-group-item'>
+				<div><label>Derivative :</label></div>
+				{% if deri_plot!=None %}
+				<div><script>
+					d_src='/static/deri_plot.png?'+(new Date()).getTime();
+					document.write("<img src="+d_src+" width=500px height=400px>");
+				</script></div>
+				{% endif %}
+			</li>
+
+		</ul>
 	</div>
 	<div class='panel panel-success'>
 		<div class='panel-heading'>
