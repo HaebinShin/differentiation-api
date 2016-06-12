@@ -83,10 +83,12 @@ class Parser:
 			try:
 				self.functions.add(now)
 				tokens.popFront()
-				tokens.popFront()
+				lparan=tokens.popFront()
 				#print tokens.front()
 				exp = self.takeExpression(tokens)
-				tokens.popFront()
+				rparan=tokens.popFront()
+				if (lparan=='(' and rparan==')')==False:
+					raise InvalidFormula()
 				#return Factor([now, '(', exp, ')'], "function")
 			except IndexError:
 				raise InvalidFormula()
@@ -95,20 +97,24 @@ class Parser:
 			try:
 				self.functions.add(now)
 				tokens.popFront()
-				tokens.popFront()	
+				lparan=tokens.popFront()	
 				#print "tokens front : ", tokens.front()
 				exp1 = self.takeExpression(tokens)
 				tokens.popFront()
 				#print "tokens front : ", tokens.front()
 				exp2 = self.takeExpression(tokens)
-				tokens.popFront()
+				rparan=tokens.popFront()
+				if (lparan=='(' and rparan==')')==False:
+					raise InvalidFormula()
 			except IndexError:
 				raise InvalidFormula()
 			return Function.determine(now, base=exp1, exponential=exp2)
-		else:
+		elif Variable.isVariable(now)==True:
 			#self.variables.add(now)
 			tokens.popFront()
 			#return Factor(now, "variable")
 			return Variable(now)
+		else:
+			raise InvalidFormula()
 
 

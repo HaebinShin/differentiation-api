@@ -171,7 +171,10 @@ class Formula:
 	def getLatexString(self):
 		#if file_name==None:
 		#	file_name='latex.png'
-		latex_string=sp.latex(sp.sympify(self.toString()))
+		try:
+			latex_string=sp.latex(sp.sympify(self.toString()))
+		except:
+			latex_string=""
 		return latex_string
 		#print "latex : ", latex_string
 		
@@ -218,6 +221,7 @@ if __name__ == "__main__":
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
 	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	#tokens=tker.tokenize("sin(x,x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
 	#tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")

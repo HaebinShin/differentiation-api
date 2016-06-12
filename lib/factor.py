@@ -61,6 +61,15 @@ class Variable(Factor):
 	def canonicalize(self):
 		return self.getAnswer()
 
+	@staticmethod
+	def isVariable(token):
+		special=Regex.special()
+		if special.match(token)==None:
+			print token
+			return True
+		else:
+			return False
+
 class Number(Factor):
 	def __init__(self, number):
 		Factor.__init__(self, number, "number")

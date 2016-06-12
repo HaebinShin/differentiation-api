@@ -1,9 +1,12 @@
 import re
 
 class Regex:
+	#__special=re.compile("[`~!@#$%^&\*()\-_=\+\\|[]{};:\'\",\n.\n<>\/?]")
+	__special=re.compile("[\+\-\*\/\,\.\`\~\!\@\#\$\%\^\&\(\)\_\=\?\<\>\[\]\{\}]")
+
 	__e  =re.compile("e",re.I)
 	__pi =re.compile("pi", re.I)
-	__num=re.compile("\d*\.\d+|\d+", re.I)
+	__num=re.compile("-*\d*\.\d+|-*\d+", re.I)
 	
 	__sin=re.compile("sine?", re.I)
 	__cos=re.compile("cos|cosine", re.I)
@@ -67,3 +70,7 @@ class Regex:
 	@classmethod
 	def log(cls):
 		return cls.__log
+
+	@classmethod
+	def special(cls):
+		return cls.__special
