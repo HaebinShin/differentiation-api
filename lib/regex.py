@@ -11,6 +11,10 @@ class Regex:
 	__sin=re.compile("sine?", re.I)
 	__cos=re.compile("cos|cosine", re.I)
 	__tan=re.compile("tan|tangent", re.I)
+	__csc=re.compile("csc|cosecant", re.I)
+	__sec=re.compile("sec|secant", re.I)
+	__cot=re.compile("cot|cotangent", re.I)
+
 	__exp=re.compile("exp|exponential", re.I)
 	__pow=re.compile("pow|power", re.I)
 	__log=re.compile("log", re.I)
@@ -21,6 +25,9 @@ class Regex:
 		 func.append(cls.__sin)
 		 func.append(cls.__cos)
 		 func.append(cls.__tan)
+		 func.append(cls.__csc)
+		 func.append(cls.__sec)
+		 func.append(cls.__cot)
 		 func.append(cls.__exp)
 		 return func
 
@@ -58,6 +65,18 @@ class Regex:
 	@classmethod
 	def tan(cls):
 		return cls.__tan
+
+	@classmethod
+	def csc(cls):
+		return cls.__csc
+	
+	@classmethod
+	def sec(cls):
+		return cls.__sec
+	
+	@classmethod
+	def cot(cls):
+		return cls.__cot
 
 	@classmethod
 	def exp(cls):

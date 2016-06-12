@@ -41,9 +41,11 @@
 			</li>
 			<li class='list-group-item'>
 				<div><label>Derivative :</label></div>
-				<div class='latex list-group-item-result'>
+				<div class='list-group-item-result'>
 					{% for now_formula in deri_formulas %}
-					<p>{{ now_formula.getLatexString() }}</p>
+					<div class='latex'>
+						{{ now_formula.getLatexString() }}
+					</div>
 					{% endfor %}
 				</div>
 			</li>

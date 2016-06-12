@@ -79,6 +79,9 @@ class Function(Factor):
 		sin=Regex.sin()
 		cos=Regex.cos()
 		tan=Regex.tan()
+		csc=Regex.csc()
+		sec=Regex.sec()
+		cot=Regex.cot()
 		exp=Regex.exp()
 		pow=Regex.pow()
 		log=Regex.log()
@@ -89,6 +92,12 @@ class Function(Factor):
 			return Cos(param)
 		elif tan.match(name)!=None:
 			return Tan(param)
+		elif csc.match(name)!=None:
+			return Csc(param)
+		elif sec.match(name)!=None:
+			return Sec(param)
+		elif cot.match(name)!=None:
+			return Cot(param)
 		elif exp.match(name)!=None:
 			return Exp(param)
 		elif pow.match(name)!=None:
@@ -146,6 +155,66 @@ class Tan(Function):
 	def getAnswer(self):
 		return tan(self.param.getAnswer())
 
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Pow(Sec(self.param),Number(2)))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Paranthesis(Expression([Term(factors,ops)], []))
+
+class Csc(Function):
+	def __init__(self, param):
+		Function.__init__(self, name="csc", param=param)
+
+	def getAnswer(self):
+		return 1.0/sin(self.param.getAnswer())
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Number(-1))
+		ops.append('*')
+		factors.append(Csc(self.param))
+		ops.append('*')
+		factors.append(Cot(self.param))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Paranthesis(Expression([Term(factors,ops)], []))
+
+class Sec(Function):
+	def __init__(self, param):
+		Function.__init__(self, name="sec", param=param)
+
+	def getAnswer(self):
+		return 1.0/cos(self.param.getAnswer())
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Sec(self.param))
+		ops.append('*')
+		factors.append(Tan(self.param))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Paranthesis(Expression([Term(factors,ops)], []))
+
+class Cot(Function):
+	def __init__(self, param):
+		Function.__init__(self, name="cot", param=param)
+
+	def getAnswer(self):
+		return 1.0/tan(self.param.getAnswer())
+
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Number(-1))
+		ops.append('*')
+		factors.append(Pow(Csc(self.param),Number(2)))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Paranthesis(Expression([Term(factors,ops)], []))
 
 class Exp(Function):
 	def __init__(self, param):

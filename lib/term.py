@@ -1,4 +1,6 @@
-from factor import Number
+from factor import Number, Variable
+#from functions import Pow
+import functions as func
 import ds
 class Term:
 	def __init__(self, factors, ops):
@@ -54,13 +56,14 @@ class Term:
 		#self.coeff=dict((key, value) for key, value in Counter(reduced).iteritems())
 		#print "coeff : ", self.coeff	
 
-		multiply_variable=[]
-		divide_variable=[]
+		multiply_variable_map={}
+		divide_variable_map={}
 		last_operator='*'
 		coeff=1
 		#idx=0
 		for factor in reduced:
 			if factor not in ['*', '/']:
+				print "\tfactor", factor
 				if len(factor.getVariables())==0:	# number
 					#if multiply_variable!=None:
 						#self.coeff[last_variable]*=factor.Answer()
@@ -73,15 +76,45 @@ class Term:
 					#	multiply_variable.append(factor.toString())
 					#else:
 						if last_operator=='*':
-							multiply_variable.append(factor)
+							#multiply_variable.append(factor)
+							exponential=multiply_variable_map.get(factor.toString())
+							if exponential==None:
+								multiply_variable_map[factor.toString()]=[1,factor]
+							else:
+								multiply_variable_map[factor.toString()][0]+=1
 						else:
-							divide_variable.append(factor)
+							#divide_variable.append(factor)
+							exponential=divide_variable_map.get(factor.toString())
+							if exponential==None:
+								divide_variable_map[factor.toString()]=[1,factor]
+							else:
+								divide_variable_map[factor.toString()][0]+=1
 			else:
 				last_operator=factor
 			#idx+=1
 		
 		#multiply_variable.sort()
 		#divide_variable.sort()
+		multiply_variable=[]
+		divide_variable=[]
+		for var in multiply_variable_map.keys():
+			exponential=multiply_variable_map[var][0]
+			real_factor=multiply_variable_map[var][1]
+			if exponential>1:
+				multiply_variable.append(func.Pow(Variable(var), Number(exponential)))
+			else:
+				multiply_variable.append(real_factor)
+		for var in divide_variable_map.keys():
+			exponential=divide_variable_map[var][0]
+			real_factor=divide_variable_map[var][1]
+			if exponential>1:
+				divide_variable.append(func.Pow(Variable(var), Number(exponential)))
+			else:
+				divide_variable.append(real_factor)
+
+
+
+		print "\tmultiply_var", multiply_variable
 		multiply_variable=ds.class_sort(multiply_variable)
 		divide_variable=ds.class_sort(divide_variable)
 
@@ -207,7 +240,7 @@ class Term:
 			return self.coeff
 		else:
 			#if len(self.terms[0].getWithoutCoeffFactor())==0:
-				print "\t\tfactor coeff 1 : ", self.terms[0].getCoeff()
+				print "\t\tfactor coeff 1 : ", self.terms[0]
 				return self.terms[0].getCoeff()
 			#else:
 				print "\t\tfactor coeff 2 : ", self.terms[0].getCoeff()
@@ -285,9 +318,9 @@ class Term:
 						deri_factors.append(self.factors[j+1])
 				elif self.ops[j]=='/':
 					if j+1==i:
-						deri_factors.append(Pow(self.factors[j+1], Number(-1)).getDerivativeBy(by_variable))
+						deri_factors.append(func.Pow(self.factors[j+1], Number(-1)).getDerivativeBy(by_variable))
 					else:
-						deri_factors.append(Pow(self.factors[j+1], Number(-1)))
+						deri_factors.append(func.Pow(self.factors[j+1], Number(-1)))
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
 			
 		#return Expression(deri_terms, deri_terms_ops)

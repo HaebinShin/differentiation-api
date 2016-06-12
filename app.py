@@ -27,11 +27,11 @@ def index():
 			plot=None
 			deri_plot=None
 			if len(df_list)<=1:
-				plot=f.getPlotImage(0,2,'plot.png')
+				plot=f.getPlotImage(-6,6,'plot.png')
 				if plot==True:
 					os.system('mv plot.png static/ 2>/dev/null')
 				if len(df_list)==1:
-					deri_plot=df_list[0].getPlotImage(0,2,'deri_plot.png')
+					deri_plot=df_list[0].getPlotImage(-10,10,'deri_plot.png')
 					if deri_plot==True:
 						os.system('mv deri_plot.png static/ 2>/dev/null')
 			
