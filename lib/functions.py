@@ -3,6 +3,7 @@ from regex import Regex
 from factor import *
 from term import Term
 from expression import Expression
+from exception import NotSupportFormula
 #import regex as Regex
 
 class Function(Factor):
@@ -12,6 +13,9 @@ class Function(Factor):
 		self.param=param
 		self.base=base
 		self.exponential=exponential
+		
+		if base!=None and exponential!=None and len(base.getVariables())>0 and len(exponential.getVariables())>0:
+			raise NotSupportFormula(self.name+"("+base.toString()+','+exponential.toString()+")")
 		
 
 	def __str__(self):
@@ -159,6 +163,8 @@ class Log(Function):
 	#		Number(1)
 	#	else:
 		Function.__init__(self, name="log", base=base, exponential=exponential)
+		#if len(base.getVariables())>0 and len(exponential.getVariables())>0:
+		#	raise NotSupportFormula("log("+base.toString()+','+exponential.toString()+")")
 
 	def getAnswer(self):
 		return log(self.exponential.getAnswer(), self.base.getAnswer())

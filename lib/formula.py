@@ -217,7 +217,7 @@ if __name__ == "__main__":
 
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
-	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
 	#tokens=tker.tokenize("x+sin(x+x)+pow(2*x,2)")
@@ -226,7 +226,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("1+2+pow(2,x)")
 	#tokens=tker.tokenize("1")
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
-	tokens=tker.tokenize("y+log(2, x)")
+	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
 	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")

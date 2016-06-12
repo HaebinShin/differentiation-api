@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from lib.formula import Formula
-from lib.exception import InvalidFormula
+from lib.exception import *
 import os
 
 class RenderData:
@@ -43,7 +43,7 @@ def index():
 			
 
 			return render_template('index.html', formula=f, deri_formulas=df_list, plot=plot, deri_plot=deri_plot)
-		except InvalidFormula as e:
+		except Error as e:
 			return render_template('index.html', error=e)
 
 if __name__=='__main__':
