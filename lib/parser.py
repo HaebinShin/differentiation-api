@@ -2,6 +2,7 @@ from factor import Number, Variable, Paranthesis
 from functions import Function
 from term import Term
 from expression import Expression
+from exception import InvalidFormula
 class Parser:
 	def __init__(self):
 		self.tree=[]
@@ -23,29 +24,38 @@ class Parser:
 	def takeExpression(self, tokens):
 		terms = []
 		ops = []
-		terms.append(self.takeTerm(tokens))
-		while tokens.isEmpty()==False and tokens.front() in ['+','-']:
-			ops.append(tokens.front())
-			tokens.popFront()
+		try:
 			terms.append(self.takeTerm(tokens))
+			while tokens.isEmpty()==False and tokens.front() in ['+','-']:
+				ops.append(tokens.front())
+				tokens.popFront()
+				terms.append(self.takeTerm(tokens))
+		except IndexError:
+			raise InvalidFormula()
 		return Expression(terms, ops)
 
 	def takeTerm(self, tokens):
 		factors = []
 		ops = []
-		factors.append(self.takeFactor(tokens))
-		while tokens.isEmpty()==False and tokens.front() in ['*', '/']:
-			ops.append(tokens.front())
-			tokens.popFront()
+		try:
 			factors.append(self.takeFactor(tokens))
+			while tokens.isEmpty()==False and tokens.front() in ['*', '/']:
+				ops.append(tokens.front())
+				tokens.popFront()
+				factors.append(self.takeFactor(tokens))
+		except IndexError:
+			raise InvalidFormula()
 		return Term(factors, ops)
 
 	def takeFactor(self, tokens):
 		now = tokens.front()
 		if now == '(':
-			tokens.popFront()
-			exp = self.takeExpression(tokens)
-			tokens.popFront()
+			try:
+				tokens.popFront()
+				exp = self.takeExpression(tokens)
+				tokens.popFront()
+			except IndexError:
+				raise InvalidFormula()
 			#return Factor(['(',exp,')'],"paranthesis")
 			#return exp	
 			return Paranthesis(exp)
@@ -56,35 +66,44 @@ class Parser:
 			#return Number(now)
 			return Number.determine(now)
 		elif now == '-':
-			tokens.popFront()
-			#fac = tokens.front()
-			fac = self.takeFactor(tokens)
-			#tokens.popFront()
-			#return Factor(['-',fac], "negative")
-			#return Negative(fac)
-			term=Term([Number(-1),fac],['*'])
-			expr=Expression([term],[])
+			try:
+				tokens.popFront()
+				#fac = tokens.front()
+				fac = self.takeFactor(tokens)
+				#tokens.popFront()
+				#return Factor(['-',fac], "negative")
+				#return Negative(fac)
+				term=Term([Number(-1),fac],['*'])
+				expr=Expression([term],[])
+			except IndexError:
+				raise InvalidFormula()
 			return Paranthesis(expr)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
-			self.functions.add(now)
-			tokens.popFront()
-			tokens.popFront()
-			#print tokens.front()
-			exp = self.takeExpression(tokens)
-			tokens.popFront()
-			#return Factor([now, '(', exp, ')'], "function")
+			try:
+				self.functions.add(now)
+				tokens.popFront()
+				tokens.popFront()
+				#print tokens.front()
+				exp = self.takeExpression(tokens)
+				tokens.popFront()
+				#return Factor([now, '(', exp, ')'], "function")
+			except IndexError:
+				raise InvalidFormula()
 			return Function.determine(now, param=exp)
 		elif Function.isDoubleParamFunction(now)==True:
-			self.functions.add(now)
-			tokens.popFront()
-			tokens.popFront()	
-			#print "tokens front : ", tokens.front()
-			exp1 = self.takeExpression(tokens)
-			tokens.popFront()
-			#print "tokens front : ", tokens.front()
-			exp2 = self.takeExpression(tokens)
-			tokens.popFront()
+			try:
+				self.functions.add(now)
+				tokens.popFront()
+				tokens.popFront()	
+				#print "tokens front : ", tokens.front()
+				exp1 = self.takeExpression(tokens)
+				tokens.popFront()
+				#print "tokens front : ", tokens.front()
+				exp2 = self.takeExpression(tokens)
+				tokens.popFront()
+			except IndexError:
+				raise InvalidFormula()
 			return Function.determine(now, base=exp1, exponential=exp2)
 		else:
 			#self.variables.add(now)

@@ -22,17 +22,19 @@
 			<h3 class='panel-title'>Formula Plot</h3>
 		</div>
 		<div class='panel-body'>
+			<div><label>Original :</label></div>
 			{% if plot!=None %}
-			<script>
+			<div><script>
 				src='/static/plot.png?'+(new Date()).getTime();
 				document.write("<img src="+src+" width=500px height=400px>");
-			</script>
+			</script></div>
 			{% endif %}
+			<div><label>Derivative :</label></div>
 			{% if deri_plot!=None %}
-			<script>
+			<div><script>
 				d_src='/static/deri_plot.png?'+(new Date()).getTime();
 				document.write("<img src="+d_src+" width=500px height=400px>");
-			</script>
+			</script></div>
 			{% endif %}
 
 		</div>

@@ -173,9 +173,9 @@ class Formula:
 		#	file_name='latex.png'
 		latex_string=sp.latex(sp.sympify(self.toString()))
 		return latex_string
-		print "latex : ", latex_string
+		#print "latex : ", latex_string
 		
-		preview(r"$%s$" % latex_string, viewer='file', filename=file_name, euler=False)
+		#preview(r"$%s$" % latex_string, viewer='file', filename=file_name, euler=False)
 		#preview(sympify(self.toString()), output='png')
 		#plt.text(0,0,r"$%s$" % latex_string, fontsize=15)
 		#fig=plt.gca()
@@ -189,20 +189,20 @@ class Formula:
 		#fig.savefig('latex.png')   # save the figure to file
 		#plt.close(fig)    # close the figure
 			
-	def latex(self, file_name=None):
+#	def latex(self, file_name=None):
 		
-		if file_name==None:
-			file_name='latex.png'
-		latex_string=latex(sympify(self.toString()))
-		r = requests.get( 'http://latex.codecogs.com/png.latex?\dpi{300} \huge %s' % latex_string )
-		f = open( file_name, 'wb' )
-		f.write( r.content )
-		f.close()
+#		if file_name==None:
+#			file_name='latex.png'
+#		latex_string=latex(sympify(self.toString()))
+#		r = requests.get( 'http://latex.codecogs.com/png.latex?\dpi{300} \huge %s' % latex_string )
+#		f = open( file_name, 'wb' )
+#		f.write( r.content )
+#		f.close()
 
-	def getMathML(self):
-		latex_string=sp.latex(sp.sympify(self.toString()))
-		math_ml=l2m.convert(latex_string)
-		return math_ml
+#	def getMathML(self):
+#		latex_string=sp.latex(sp.sympify(self.toString()))
+#		math_ml=l2m.convert(latex_string)
+#		return math_ml
 
 
 if __name__ == "__main__":
@@ -254,7 +254,7 @@ if __name__ == "__main__":
 	print formula.getAnswer()
 	#formula.getPlotImage(-1.3,1.3, 'plot.png')
 	#formula.getLatex('latex.png')
-	print formula.getMathML()
+	#print formula.getMathML()
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))

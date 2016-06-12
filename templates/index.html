@@ -7,10 +7,13 @@
 
 	<body>
 		<div class="container">
-			{% include 'input.html' %}
-			{% if formula %}
-				{% include 'result.html' %}
-			{% endif %}
+				{% include 'input.html' %}
+				{% if formula %}
+					{% include 'result.html' %}
+				{% endif %}
+				{% if error %}
+					{% include 'error.html' %}
+				{% endif %}
 		</div>
 	</body>
 
