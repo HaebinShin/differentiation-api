@@ -14,12 +14,16 @@
 		<ul class='list-group'>
 			<li class='list-group-item'>
 				<div><label>Original :</label></div>
-				<div class='list-group-item-result'>{{ formula.toString() }}	</div>
+				<div class='list-group-item-result'>
+					{{ formula.toString() }}
+				</div>
 			</li>
 			<li class='list-group-item'>	
 				<div><label>Derivative :</label></div>
 				{% for now_formula in deri_formulas %}
-				<div class='list-group-item-result'>{{ now_formula.toString() }}</div>
+				<div class='list-group-item-result'>
+					{{ now_formula.toString() }}
+				</div>
 				{% endfor %}
 			</li>
 		</ul>

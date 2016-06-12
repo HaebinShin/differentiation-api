@@ -8,7 +8,10 @@
 
 	<body>
 		<div class="container">
-				{% include 'input.html' %}
+				{% include 'form.html' %}
+				{% if input_formula %}
+					{% include 'input.html' %}
+				{% endif %}
 				{% if formula %}
 					{% include 'result.html' %}
 				{% endif %}

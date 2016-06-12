@@ -3,12 +3,6 @@ from lib.formula import Formula
 from lib.exception import *
 import os
 
-class RenderData:
-	def formulaString(self):
-		return self
-
-
-
 app=Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -42,9 +36,9 @@ def index():
 						os.system('mv deri_plot.png static/ 2>/dev/null')
 			
 
-			return render_template('index.html', formula=f, deri_formulas=df_list, plot=plot, deri_plot=deri_plot)
+			return render_template('index.html', input_formula=input_formula, formula=f, deri_formulas=df_list, plot=plot, deri_plot=deri_plot)
 		except Error as e:
-			return render_template('index.html', error=e)
+			return render_template('index.html', input_formula=input_formula, error=e)
 
 if __name__=='__main__':
 	app.run(host='0.0.0.0', port=8443, debug=True)
