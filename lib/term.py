@@ -93,6 +93,15 @@ class Term:
 				last_operator=factor
 			#idx+=1
 		
+		for mval in multiply_variable_map.keys():
+			for dval in divide_variable_map.keys():
+				if mval==dval:
+					multiply_variable_map[mval][0]-=1
+					divide_variable_map[dval][0]-=1
+
+
+
+
 		#multiply_variable.sort()
 		#divide_variable.sort()
 		multiply_variable=[]
@@ -102,16 +111,15 @@ class Term:
 			real_factor=multiply_variable_map[var][1]
 			if exponential>1:
 				multiply_variable.append(func.Pow(Variable(var), Number(exponential)))
-			else:
+			elif exponential==1:
 				multiply_variable.append(real_factor)
 		for var in divide_variable_map.keys():
 			exponential=divide_variable_map[var][0]
 			real_factor=divide_variable_map[var][1]
 			if exponential>1:
 				divide_variable.append(func.Pow(Variable(var), Number(exponential)))
-			else:
+			elif exponential==1:
 				divide_variable.append(real_factor)
-
 
 
 		print "\tmultiply_var", multiply_variable
