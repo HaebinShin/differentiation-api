@@ -1,5 +1,10 @@
 from tokenizer import Tokenizer
 from parser import Parser
+from vector import Vector
+from expression import Expression
+from term import Term
+from factor import Number, Paranthesis
+from exception import InvalidPlotRange
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -88,7 +93,7 @@ class Formula:
 				return "error - not initialize variable"
 
 		mid=self.expression.getAnswer()
-		alpha=float(0.0000001)
+		alpha=float(0.001)
 		tolerance=float(0.00000000001)
 
 		result=True
@@ -151,19 +156,37 @@ class Formula:
 		return Formula(Expression(terms, terms_ops))
 
 	def getPlotImage(self, start, end, file_name):
+
+		if ((type(eval(repr(start)))==int or float) and (type(eval(repr(end)))==int or float))==False:
+			raise InvalidPlotRange()
+			
+
 		var_cnt=len(self.variables)
 		xs=[]
 		ys=[]
+		max_y=1e-20
+		min_y=1e20
+
+		max_y_limit=500
+		min_y_limit=-500
 		if var_cnt>1:
 			return "error - it's not one variable function"
 		for x in np.arange(start, end, 0.001):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			y=self.getAnswer()
+			max_y=max(max_y, y)
+			min_y=min(min_y, y)
 			xs.append(x)
 			ys.append(y)
-		print "plot2"
 		plt.plot(xs, ys)
+		#plt.axis([min_x,max_x,min_y,max_y])
+		#plt.axis([start,end,-3,3])
+		if max_y>max_y_limit:
+			max_y=max_y_limit
+		if min_y<min_y_limit:
+			min_y=min_y_limit
+		plt.ylim(min_y, max_y)
 		plt.savefig(file_name)
 		plt.close()
 		return True
@@ -175,7 +198,7 @@ class Formula:
 		try:
 			st=self.toString()
 			print "st : ",st
-			re_st=re.sub(r"log\((?P<base>.*),(?P<exponent>.*)\)", r"log(\g<exponent>,\g<base>)", st)
+			re_st=re.sub(r"log\((?P<base>[^,;]+),{1}(?P<exponent>.*)\)", r"log(\g<exponent>,\g<base>)", st)
 			print "re : ",re_st
 			latex_string=sp.latex(sp.sympify(re_st))
 		except:
@@ -225,7 +248,7 @@ if __name__ == "__main__":
 
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
-	tokens=tker.tokenize("1---2")
+	tokens=tker.tokenize("pow(x,-1)")
 	#tokens=tker.tokenize("sin(x,x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
@@ -237,7 +260,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
-	tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
+	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
 	#tokens=tker.tokenize("x*(x*y*-3+x*y)")
@@ -257,7 +280,7 @@ if __name__ == "__main__":
 	formula=Formula(expr)
 	print formula
 	print "AASDFASDFSADFSDFSDFSFD", formula.toString()
-	print formula.setVariable("x", 2)
+	print formula.setVariable("x", 0.5)
 	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()

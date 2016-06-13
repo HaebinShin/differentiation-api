@@ -1,5 +1,5 @@
 from math import sqrt
-
+from exception import InvalidVectorInput
 '''
 usage:	Vector(1,2)
 	Vector([1,2])
@@ -17,6 +17,16 @@ class Vector:
 	def __str__(self):
 		return "%s" % self.args
 
+	def toString(self):
+		vec_st=""
+		for arg in self.args:
+			if vec_st!="":
+				vec_st+=', '
+			vec_st+=arg.toString()
+		return vec_st
+
+
+
 	def getVector(self):
 		return self.args
 
@@ -30,8 +40,8 @@ class Vector:
 		sq_sum=0
 		unit_vector=[]
 		for arg in self.args:
-			if type(arg)==str:
-				return "error - components are not number"
+			if (type(arg)==int or type(arg)==float)==False:
+				raise InvalidVectorInput()
 			sq_sum+=pow(arg, 2)
 		for i in range(len(self.args)):
 			unit_vector.append(self.args[i]/sqrt(sq_sum))

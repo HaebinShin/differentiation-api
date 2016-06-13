@@ -25,7 +25,7 @@ class Term:
 						self.factors[i]=Number(1)
 
 
-		reduced=self.__reduceMulDiv(factors, ops)
+		reduced=self.__reduceOne(factors, ops)
 
 		self.terms=[]
 
@@ -52,43 +52,91 @@ class Term:
 	
 		print "\tnow terms : ", reduced
 
-		
-		#self.coeff=dict((key, value) for key, value in Counter(reduced).iteritems())
-		#print "coeff : ", self.coeff	
+		_reduced, coeff=self.__reduceCoeff(reduced)
+		self.terms=_reduced
+		self.coeff=coeff	
+						
+		print "\t_reduced : ", self.terms
+		print "\tcoeff : ", coeff
 
+
+	#	self.terms=[]
+	#	if len(self.reduce_terms)!=1:
+	#		for i in range(len(self.reduce_terms)):
+	#			if self.reduce_terms[i]=='*':
+	#				if self.reduce_terms[i+1].getVariables()==None and eval(repr(self.reduce_terms[i+1]))==1:
+	#					self.terms.append(self.reduce_terms[i-1])
+
+
+	#def __reduceOne(self, terms):
+	#	for factor in terms:
+
+
+	def __str__(self):
+		return "%s" % self.terms
+
+	def __repr__(self):
+		return "%s" % self.terms
+
+
+	def __reduceOne(self, factors, ops):
+		reduced=[]
+
+		reduced.append(factors[0])
+		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
+			reduced=[Number(0)]
+		else:
+			for i in range(len(ops)):
+				#if len(factors[i+1].getVariables())==0:
+					#print factors[i+1].getAnswer()
+				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
+					reduced=[Number(0)]
+					break
+				elif ops[i]=='*' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==1:
+					reduced.pop()
+					reduced.append(factors[i+1])
+					continue
+				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
+					continue
+				else:
+					reduced.append(ops[i])
+					reduced.append(factors[i+1])
+		return reduced
+
+	def __reduceCoeff(self, reduced):
 		multiply_variable_map={}
 		divide_variable_map={}
 		last_operator='*'
 		coeff=1
 		#idx=0
 		for factor in reduced:
+			print "\tfactor", factor
 			if factor not in ['*', '/']:
-				print "\tfactor", factor
 				if len(factor.getVariables())==0:	# number
 					#if multiply_variable!=None:
 						#self.coeff[last_variable]*=factor.Answer()
-						if last_operator=='*':
-							coeff*=factor.getAnswer()
-						else:
-							coeff/=factor.getAnswer()
+					if last_operator=='*':
+						coeff*=factor.getAnswer()
+					else:
+						coeff/=factor.getAnswer()
 				else:					# variable
 					#if len(multiply_variable)==0:
 					#	multiply_variable.append(factor.toString())
 					#else:
-						if last_operator=='*':
-							#multiply_variable.append(factor)
-							exponential=multiply_variable_map.get(factor.toString())
-							if exponential==None:
-								multiply_variable_map[factor.toString()]=[1,factor]
-							else:
-								multiply_variable_map[factor.toString()][0]+=1
+					if last_operator=='*':
+						#multiply_variable.append(factor)
+						exponential=multiply_variable_map.get(factor.toString())
+						if exponential==None:
+							multiply_variable_map[factor.toString()]=[1,factor]
 						else:
-							#divide_variable.append(factor)
-							exponential=divide_variable_map.get(factor.toString())
-							if exponential==None:
-								divide_variable_map[factor.toString()]=[1,factor]
-							else:
-								divide_variable_map[factor.toString()][0]+=1
+							multiply_variable_map[factor.toString()][0]+=1
+					else:
+						#divide_variable.append(factor)
+						exponential=divide_variable_map.get(factor.toString())
+						if exponential==None:
+							divide_variable_map[factor.toString()]=[1,factor]
+						else:
+							divide_variable_map[factor.toString()][0]+=1
 			else:
 				last_operator=factor
 			#idx+=1
@@ -132,7 +180,7 @@ class Term:
 
 
 		_reduced=[]
-		if ((len(multiply_variable)>0 or len(divide_variable)>0) and coeff==1)==False:
+		if (len(multiply_variable)>0 and coeff==1)==False:
 			_reduced.append(Number(coeff))
 
 #		mul_idx=0
@@ -148,77 +196,12 @@ class Term:
 			_reduced.append(var)
 		for var in divide_variable:
 			if len(_reduced)!=0:
-				_reduced.append('/')
+				_reduced.append('*')
 			if len(self.only_factor_list)!=0:
-				self.only_factor_list.append('/')
-			self.only_factor_list.append(var)
+				self.only_factor_list.append('*')
+			self.only_factor_list.append(func.Pow(var, Number(-1)))
 			_reduced.append(var)
-
-		
-#		_reduced.append(multiply_variable[mul_idx])
-#		mul_idx+=1
-#		for i in range(len(multiply_variable)+len(divide_variable)+len(ops)-1):
-#			if i%2==0:
-#				_reduced.append(ops[ops_idx])
-#				ops_idx+=1
-#			else:
-#				if ops[ops_idx-1]=='*':
-#					_reduced.append(multiply_variable[mul_idx])
-#					mul_idx+=1
-#				else:
-#					_reduced.append(divide_variable[div_idx])
-#					div_idx+=1
-#
-	
-		self.terms=_reduced
-		self.coeff=coeff	
-						
-		print "\t_reduced : ", self.terms
-		print "\tcoeff : ", coeff
-
-
-	#	self.terms=[]
-	#	if len(self.reduce_terms)!=1:
-	#		for i in range(len(self.reduce_terms)):
-	#			if self.reduce_terms[i]=='*':
-	#				if self.reduce_terms[i+1].getVariables()==None and eval(repr(self.reduce_terms[i+1]))==1:
-	#					self.terms.append(self.reduce_terms[i-1])
-
-
-	#def __reduceOne(self, terms):
-	#	for factor in terms:
-
-
-	def __str__(self):
-		return "%s" % self.terms
-
-	def __repr__(self):
-		return "%s" % self.terms
-
-
-	def __reduceMulDiv(self, factors, ops):
-		reduced=[]
-
-		reduced.append(factors[0])
-		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:
-			reduced=[Number(0)]
-		else:
-			for i in range(len(ops)):
-				#if len(factors[i+1].getVariables())==0:
-					#print factors[i+1].getAnswer()
-				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:
-					reduced=[Number(0)]
-					break
-				elif ops[i]=='*' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==1:
-					reduced.pop()
-					reduced.append(factors[i+1])
-					continue
-				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:
-					continue
-				else:
-					reduced.append(ops[i])
-					reduced.append(factors[i+1])
-		return reduced
+		return (_reduced, coeff)
 	
 	def getWithoutCoeffFactor(self):
 		#if len(self.only_factor_list)==1 and self.only_factor_list[0].getType()=="paranthesis":

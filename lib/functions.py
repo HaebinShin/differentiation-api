@@ -14,8 +14,12 @@ class Function(Factor):
 		self.base=base
 		self.exponential=exponential
 		
-		if base!=None and exponential!=None and len(base.getVariables())>0 and len(exponential.getVariables())>0:
-			raise NotSupportFormula(self.name+"("+base.toString()+','+exponential.toString()+")")
+		if base!=None and exponential!=None:
+			if name=='pow' and len(base.getVariables())>0 and len(exponential.getVariables())>0:
+				raise NotSupportFormula(self.name+"("+base.toString()+','+exponential.toString()+")")
+			elif name=='log' and len(base.getVariables())>0:
+				raise NotSupportFormula(self.name+"("+base.toString()+','+exponential.toString()+")")
+				
 		
 
 	def __str__(self):
@@ -115,7 +119,10 @@ class Sin(Function):
 
 	def getAnswer(self):
 		#print self.param
-		return sin(self.param.getAnswer())
+		try:
+			return sin(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -131,7 +138,10 @@ class Cos(Function):
 		Function.__init__(self, name="cos", param=param)
 
 	def getAnswer(self):
-		return cos(self.param.getAnswer())
+		try:
+			return cos(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -153,7 +163,10 @@ class Tan(Function):
 		Function.__init__(self, name="tan", param=param)
 
 	def getAnswer(self):
-		return tan(self.param.getAnswer())
+		try:
+			return tan(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -168,7 +181,10 @@ class Csc(Function):
 		Function.__init__(self, name="csc", param=param)
 
 	def getAnswer(self):
-		return 1.0/sin(self.param.getAnswer())
+		try:
+			return 1.0/sin(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -187,7 +203,10 @@ class Sec(Function):
 		Function.__init__(self, name="sec", param=param)
 
 	def getAnswer(self):
-		return 1.0/cos(self.param.getAnswer())
+		try:
+			return 1.0/cos(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -204,7 +223,10 @@ class Cot(Function):
 		Function.__init__(self, name="cot", param=param)
 
 	def getAnswer(self):
-		return 1.0/tan(self.param.getAnswer())
+		try:
+			return 1.0/tan(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -221,7 +243,18 @@ class Exp(Function):
 		Function.__init__(self, name="exp", param=param)
 
 	def getAnswer(self):
-		return exp(self.param.getAnswer())
+		try:
+			return exp(self.param.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
+	
+	def getDerivativeBy(self, by_variable):
+		factors=[]
+		ops=[]
+		factors.append(Exp(self.param))
+		ops.append('*')
+		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
+		return Paranthesis(Expression([Term(factors, ops)], []))
 
 
 class Log(Function):
@@ -236,7 +269,11 @@ class Log(Function):
 		#	raise NotSupportFormula("log("+base.toString()+','+exponential.toString()+")")
 
 	def getAnswer(self):
-		return log(self.exponential.getAnswer(), self.base.getAnswer())
+		try:
+			if self.exponential.getAnswer()>0:
+				return log(self.exponential.getAnswer(), self.base.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
 
 	def setVariable(self, variable, value):
 		return (self.base.setVariable(variable, value) | self.exponential.setVariable(variable, value))
@@ -261,7 +298,13 @@ class Pow(Function):
 
 	def getAnswer(self):
 		#print self.base.getAnswer(), self.exponential.getAnswer()
-		return pow(self.base.getAnswer(), self.exponential.getAnswer())
+		try:
+			print self.base.getAnswer(), self.exponential.getAnswer()
+			return pow(self.base.getAnswer(), self.exponential.getAnswer())
+		except ZeroDivisionError:
+			return 1e10
+		except ValueError:
+			return 0
 
 	def setVariable(self, variable, value):
 		return (self.base.setVariable(variable, value) | self.exponential.setVariable(variable, value))

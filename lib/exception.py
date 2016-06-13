@@ -11,3 +11,11 @@ class NotSupportFormula(Error):
 
 	def  __str__(self):
 		return "Not support '%s'" % self.formula
+
+class InvalidPlotRange(Error):
+	def __str__(self):
+		return "Invalid Plot Range"
+
+class InvalidVectorInput(Error):
+	def __str__(self):
+		return "Invalid Vector"

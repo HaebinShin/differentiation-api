@@ -59,25 +59,6 @@ class Parser:
 			#return Factor(['(',exp,')'],"paranthesis")
 			#return exp	
 			return Paranthesis(exp)
-		#elif re.match("\d*\.\d+|\d+", now)!=None:
-		elif Number.isNumber(now)==True:
-			tokens.popFront()
-			#return Factor(now, "number")
-			#return Number(now)
-			return Number.determine(now)
-		elif now == '-':
-			try:
-				tokens.popFront()
-				#fac = tokens.front()
-				fac = self.takeFactor(tokens)
-				#tokens.popFront()
-				#return Factor(['-',fac], "negative")
-				#return Negative(fac)
-				term=Term([Number(-1),fac],['*'])
-				expr=Expression([term],[])
-			except IndexError:
-				raise InvalidFormula()
-			return Paranthesis(expr)
 		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
 			try:
@@ -109,6 +90,25 @@ class Parser:
 			except IndexError:
 				raise InvalidFormula()
 			return Function.determine(now, base=exp1, exponential=exp2)
+		#elif re.match("\d*\.\d+|\d+", now)!=None:
+		elif Number.isNumber(now)==True:
+			tokens.popFront()
+			#return Factor(now, "number")
+			#return Number(now)
+			return Number.determine(now)
+		elif now == '-':
+			try:
+				tokens.popFront()
+				#fac = tokens.front()
+				fac = self.takeFactor(tokens)
+				#tokens.popFront()
+				#return Factor(['-',fac], "negative")
+				#return Negative(fac)
+				term=Term([Number(-1),fac],['*'])
+				expr=Expression([term],[])
+			except IndexError:
+				raise InvalidFormula()
+			return Paranthesis(expr)
 		elif Variable.isVariable(now)==True:
 			#self.variables.add(now)
 			tokens.popFront()

@@ -3,28 +3,25 @@
 		<div class='panel-heading'>
 			<h3 class='panel-title'>Input</h3>
 		</div>
+		<div class='panel-body'>			
+			<h3 class='panel-title list-group-item-result'>{{ formula_input }}</h3>
+		</div>
 		<li class='list-group-item'>	
 			<div><label>Formula Input :</label></div>
 			<div class='list-group-item-result'>
-			{% if inputs['formula'] %}
-				{{ inputs['formula'] }}
-			{% endif %}
+				{{ formula_input }}
 			</div>
 		</li>
 		<li class='list-group-item'>	
 			<div><label>Plot Range :</label></div>
 			<div class='list-group-item-result'>
-			{% if inputs['ranges'] %}
-				{{ inputs['ranges'] }}
-			{% endif %}
+				{{ range }}
 			</div>
 		</li>
 		<li class='list-group-item'>	
 			<div><label>Vector Input :</label></div>
 			<div class='list-group-item-result'>
-			{% if inputs['vector'] %}
-				{{ inputs['vector'] }}
-			{% endif %}
+				{{ vector }}
 			</div>
 		</li>
 	</div>

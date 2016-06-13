@@ -93,7 +93,7 @@
 		</div>
 		<div class='panel-body'>
 			<span> < </span>
-			{{ dir_deri }}
+			{{ formula.getDirectionalDerivative().toString() }}
 			<span> > </span>
 		</div>
 	</div>

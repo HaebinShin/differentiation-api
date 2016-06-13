@@ -18,10 +18,38 @@ class Expression:
 #				self.expressions.append(ops[i])
 #				self.expressions.append(terms[i+1])
 
-		reduced=self.__reducePlusMinus(terms, ops)
+		reduced=self.__reduceZero(terms, ops)
 
 		print "reduced : ", reduced
+		
+		_reduced=self.__reduceCoeff(reduced)
 
+		self.expressions=_reduced
+		print "expressions : ", self.expressions
+
+	def __str__(self):
+		return "%s" % self.expressions
+
+	def __repr__(self):
+		return "%s" % self.expressions
+
+
+	def __reduceZero(self, terms, ops):
+		reduced=[]
+		reduced.append(terms[0])
+		for i in range(len(ops)):
+			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:
+				reduced.pop()
+				reduced.append(terms[i+1])
+				continue
+			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
+				continue
+			else:
+				reduced.append(ops[i])
+				reduced.append(terms[i+1])
+		return reduced
+
+	def __reduceCoeff(self, reduced):
 		coeff_map={}
 		plus_factors=[]
 		minus_factors=[]
@@ -106,32 +134,8 @@ class Expression:
 					_reduced.append('+')
 	
 			_reduced.append(Term(to_term, to_term_ops))
+		return _reduced
 
-
-		self.expressions=_reduced
-		print "expressions : ", self.expressions
-
-	def __str__(self):
-		return "%s" % self.expressions
-
-	def __repr__(self):
-		return "%s" % self.expressions
-
-
-	def __reducePlusMinus(self, terms, ops):
-		reduced=[]
-		reduced.append(terms[0])
-		for i in range(len(ops)):
-			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:
-				reduced.pop()
-				reduced.append(terms[i+1])
-				continue
-			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
-				continue
-			else:
-				reduced.append(ops[i])
-				reduced.append(terms[i+1])
-		return reduced
 		
 	def getWithoutCoeffFactor(self):
 		if len(self.expressions)==1:
