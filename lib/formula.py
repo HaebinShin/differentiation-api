@@ -5,7 +5,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
-import latex2mathml as l2m
+import re
+#import latex2mathml as l2m
 #from numpy import arange
 #from sympy import latex, sympify, preview
 
@@ -88,7 +89,7 @@ class Formula:
 
 		mid=self.expression.getAnswer()
 		alpha=float(0.0000001)
-		tolerance=float(2)
+		tolerance=float(0.00000000001)
 
 		result=True
 		for variable in self.variables:
@@ -172,7 +173,11 @@ class Formula:
 		#if file_name==None:
 		#	file_name='latex.png'
 		try:
-			latex_string=sp.latex(sp.sympify(self.toString()))
+			st=self.toString()
+			print "st : ",st
+			re_st=re.sub(r"log\((?P<base>.*),(?P<exponent>.*)\)", r"log(\g<exponent>,\g<base>)", st)
+			print "re : ",re_st
+			latex_string=sp.latex(sp.sympify(re_st))
 		except:
 			latex_string=""
 		return latex_string
@@ -220,7 +225,7 @@ if __name__ == "__main__":
 
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
-	tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)")
+	tokens=tker.tokenize("1---2")
 	#tokens=tker.tokenize("sin(x,x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
@@ -232,7 +237,7 @@ if __name__ == "__main__":
 	#tokens=tker.tokenize("pow(2*x, 2)/x")
 	#tokens=tker.tokenize("y+log(2, x)")
 	#tokens=tker.tokenize("-(pow(x+x+4*x-x,2))")
-	#tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
+	tokens=tker.tokenize("-log(x+x+4*x-y, 2)")
 	#tokens=tker.tokenize("-y+2*x+x")
 	#tokens=tker.tokenize("x--x")
 	#tokens=tker.tokenize("x*(x*y*-3+x*y)")
