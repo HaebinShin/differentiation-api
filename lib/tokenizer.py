@@ -33,7 +33,7 @@ class Tokenizer:
 
 	def tokenize(self, input_string):
 		input_string=input_string.replace(" ", "")
-		self.tokens=re.findall("-*\d+\.\d+|-*\d+|[\+\-\*\/\(\)]|\w+|\,", input_string)
+		self.tokens=re.findall("-?\d+\.\d+|-?\d+|[\+\-\*\/\(\)]|\w+|\,", input_string)
 		return Tokens(self.tokens)
 
 
