@@ -4,31 +4,19 @@ import ds
 class Expression:
 	def __init__(self, terms, ops):
 		self.variables={}
-
 		self.expressions=[]
-#		self.expressions.append(terms[0])
-#		for i in range(len(ops)):
-#			if ops[i]=='+' and len(self.expressions[-1].getVariables())==0 and eval(repr(self.expressions[-1].getAnswer()))==0:
-#				self.expressions.pop()
-#				self.expressions.append(terms[i+1])
-#				continue
-#			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
-#				continue
-#			else:
-#				self.expressions.append(ops[i])
-#				self.expressions.append(terms[i+1])
 
 		reduced=self.__reduceZero(terms, ops)
-
 		print "reduced : ", reduced
-		
 		_reduced=self.__reduceCoeff(reduced)
-
+		
 		self.expressions=_reduced
 		print "expressions : ", self.expressions
 
+
 	def __str__(self):
 		return "%s" % self.expressions
+
 
 	def __repr__(self):
 		return "%s" % self.expressions
@@ -38,21 +26,22 @@ class Expression:
 		reduced=[]
 		reduced.append(terms[0])
 		for i in range(len(ops)):
-			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:
+			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:		# zero in reduced
 				reduced.pop()
 				reduced.append(terms[i+1])
 				continue
-			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:
+			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:						# zero now watching
 				continue
-			else:
+			else:						# just push
 				reduced.append(ops[i])
 				reduced.append(terms[i+1])
 		return reduced
 
+
 	def __reduceCoeff(self, reduced):
 		coeff_map={}
-		plus_factors=[]
-		minus_factors=[]
+		#plus_factors=[]
+		#minus_factors=[]
 		last_operator='+'
 		#coeff=0
 		for term in reduced:
@@ -113,9 +102,9 @@ class Expression:
 			coeff=coeff_map[fac][0]
 			real_factor=coeff_map[fac][1]
 			
-			minus_flag=False
-			if coeff<0:
-				minus_flag=True
+			#minus_flag=False
+			#if coeff<0:
+			#	minus_flag=True
 			to_term.append(Number(coeff))
 			if len(real_factor)>0:
 				to_term_ops.append('*')
@@ -172,12 +161,10 @@ class Expression:
 			if term in ['+', '-']:
 				reduced+=str(term)
 			else:
-				#print "asfd : ", term
 				reduced+=str(term.getAnswer())
 		return eval(reduced)
 
 	def getVariables(self):
-		#return list(self.variables.keys())
 		variables=set([])
 		for term in self.expressions:
 			if term not in ['+', '-']:
@@ -185,9 +172,6 @@ class Expression:
 				if var!=None:
 					for now in var:
 						variables.add(now)
-		#if len(variables)==0:
-		#	return None
-		#else:
 		return list(variables)
 
 	def setVariable(self, variable, value):
@@ -218,7 +202,4 @@ class Expression:
 			#print "deri ops  : ", deri_ops
 		
 		return Expression(deri_terms, deri_ops)
-		#return deri_tree
 
-	def canonicalize(self):
-		pass	

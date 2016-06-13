@@ -4,7 +4,6 @@ from factor import *
 from term import Term
 from expression import Expression
 from exception import NotSupportFormula
-#import regex as Regex
 
 class Function(Factor):
 	def __init__(self, name=None, param=None, base=None, exponential=None):
@@ -118,7 +117,6 @@ class Sin(Function):
 		Function.__init__(self, name="sin", param=param)
 
 	def getAnswer(self):
-		#print self.param
 		try:
 			return sin(self.param.getAnswer())
 		except ZeroDivisionError:
@@ -156,7 +154,6 @@ class Cos(Function):
 		a=Paranthesis(Expression([Term(factors,ops)], []))
 		print "asdf ",a
 		return Paranthesis(Expression([Term(factors,ops)], []))
-		#return Term(factors,ops)
 
 class Tan(Function):
 	def __init__(self, param):
@@ -259,14 +256,7 @@ class Exp(Function):
 
 class Log(Function):
 	def __init__(self, base, exponential):
-		#print base.getVariables()
-		#print exponential.getVariables()
-	#	if len(base.getVariables())==0 and len(exponential.getVariables())==0:
-	#		Number(1)
-	#	else:
 		Function.__init__(self, name="log", base=base, exponential=exponential)
-		#if len(base.getVariables())>0 and len(exponential.getVariables())>0:
-		#	raise NotSupportFormula("log("+base.toString()+','+exponential.toString()+")")
 
 	def getAnswer(self):
 		try:
@@ -297,7 +287,6 @@ class Pow(Function):
 		Function.__init__(self, name="pow", base=base, exponential=exponential)
 
 	def getAnswer(self):
-		#print self.base.getAnswer(), self.exponential.getAnswer()
 		try:
 			print self.base.getAnswer(), self.exponential.getAnswer()
 			return pow(self.base.getAnswer(), self.exponential.getAnswer())
@@ -318,7 +307,6 @@ class Pow(Function):
 			ops.append('*')
 			factors.append(Pow(self.base, Number(self.exponential.getAnswer()-1)))
 			ops.append('*')
-			#factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(self.exponential.getAnswer())))
 			factors.append(Pow(self.base.getDerivativeBy(by_variable), Number(1)))
 
 		elif len(self.base.getVariables())==0 and len(self.exponential.getVariables())>0:

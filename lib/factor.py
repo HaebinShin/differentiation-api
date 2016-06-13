@@ -58,8 +58,6 @@ class Variable(Factor):
 		else:
 			return Number(0)
 
-	def canonicalize(self):
-		return self.getAnswer()
 
 	@staticmethod
 	def isVariable(token):
@@ -109,11 +107,7 @@ class Number(Factor):
 		return False
 
 	def getDerivativeBy(self, by_variable):
-		#return Term([Number(0)], [])
 		return Number(0)
-
-	def canonicalize(self):
-		return self.getAnswer()
 
 	@staticmethod
 	def isNumber(token):
@@ -237,9 +231,4 @@ class Paranthesis(Factor):
 	def getCoeff(self):
 		#return self.expression.getCoeff()
 		return 1
-
-
-	def canonicalize(self):
-		return self.expression.canonicalize()
-
 

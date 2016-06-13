@@ -47,7 +47,7 @@ def index():
 			dir_deri=None
 			if len(vec_list)>0 and len(vec_list)==len(f.getVariables()):
 				dir_deri=f.getDirectionalDerivative(Vector(to_real_vector)).toString()
-			elif len(vec_list)!=len(f.getVariables()):
+			elif len(vec_list)>0 and len(vec_list)!=len(f.getVariables()):
 				raise InvalidVectorInput()
 			
 

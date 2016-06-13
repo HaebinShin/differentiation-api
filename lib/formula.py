@@ -4,7 +4,7 @@ from vector import Vector
 from expression import Expression
 from term import Term
 from factor import Number, Paranthesis
-from exception import InvalidPlotRange
+from exception import InvalidPlotRange, InvalidVectorInput
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -20,6 +20,8 @@ class Formula:
 	def __init__(self, expression):
 		#self.expression=[]
 		if type(expression)==str or type(expression)==unicode:
+			expression=str(expression)
+			
 			tknr=Tokenizer()
 			tokens=tknr.tokenize(expression)
 
@@ -126,18 +128,16 @@ class Formula:
 
 	def getGradient(self):
 		vec_list=[]
-		print "QWER",self.variables
 		for variable in self.variables:
 			vec_list.append(self.expression.getDerivativeBy(variable))
 		return Vector(vec_list)
 	
 	def getDirectionalDerivative(self, vector):
 		grad_vec=self.getGradient()
-		print "asdf", grad_vec
 		unit_vec=vector.getUnitVector()
 
 		if grad_vec.getDimension()!=unit_vec.getDimension():
-			return "error - not same dimension"
+			raise InvalidVectorInput()
 		
 		terms=[]
 		terms_ops=[]
@@ -157,7 +157,7 @@ class Formula:
 
 	def getPlotImage(self, start, end, file_name):
 
-		if ((type(eval(repr(start)))==int or float) and (type(eval(repr(end)))==int or float))==False:
+		if ((type(eval(repr(start)))==int or type(eval(repr(start)))==float) and (type(eval(repr(end)))==int or type(eval(repr(end)))==float))==False:
 			raise InvalidPlotRange()
 			
 
@@ -171,7 +171,7 @@ class Formula:
 		min_y_limit=-500
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in np.arange(start, end, 0.001):
+		for x in np.arange(start, end, 0.02):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			y=self.getAnswer()
