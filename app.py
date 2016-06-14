@@ -33,8 +33,10 @@ def index():
 			
 			ranges=filter(None, re.split(r"[\s,]", plot_range))
 			if len(ranges)==2:
-				start=int(ranges[0])
-				end=int(ranges[1])
+				start=ranges[0]
+				end=ranges[1]
+			else:
+				raise InvalidPlotRange()
 			print "ranges : ", ranges
 
 
@@ -57,13 +59,11 @@ def index():
 			df_list={}
 			var_list=[]
 			if len(f.getVariables())==0:
-				#df_list.append(f.getDerivativeBy("None"))
 				var_list.append('constant')
 				df_list['constant']=f.getDerivativeBy('None')
 			for var in f.getVariables():
 				var_list.append(var)
 				df=f.getDerivativeBy(var)
-				#df_list.append(df)
 				df_list[str(var)]=df
 
 			plot=None

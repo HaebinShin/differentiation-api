@@ -40,20 +40,11 @@ class Expression:
 
 	def __reduceCoeff(self, reduced):
 		coeff_map={}
-		#plus_factors=[]
-		#minus_factors=[]
 		last_operator='+'
-		#coeff=0
 		for term in reduced:
 			print "expressions term : ", term
-			#if Number.isNumber(str(term[0].getAnswer()))==True:
 			if term not in ['+', '-']:
-				#for fac in term.getOnlyFactor():
-				#	print fac
-
 				coeff=term.getCoeff()
-				#varlist=term.getVariables()
-				#varst=str(varlist)
 				without_coeff_factor=term.getWithoutCoeffFactor()
 				print "term : ",term
 				print "term coeff : ",coeff
@@ -68,12 +59,6 @@ class Expression:
 						else:
 							ops.append(fac)
 					without_coeff_factor_term=Term(facs, ops)
-				#real_term=term
-				#print type(without_coeff_factor)
-				#for var in varlist:
-				#	varst+=str(var)
-				#	print varst
-				#print "in expression term : ", coeff, varst
 				if without_coeff_factor_term==None:
 					key="NONE"
 				else:
@@ -82,7 +67,6 @@ class Expression:
 				if coeff_map.get(key)==None:
 					coeff_map[key]=[eval(last_operator+repr(coeff)),without_coeff_factor]
 				else:
-					#coeff_map[varst]+=(eval(last_operator+str(coeff)), real_term)
 					coeff_map[key][0]+=eval(last_operator+repr(coeff))
 			else:
 				last_operator=term
@@ -92,7 +76,6 @@ class Expression:
 		
 
 		faclist=coeff_map.keys()
-		#faclist.sort()
 		faclist=ds.class_sort(faclist)
 		_reduced=[]
 
@@ -102,24 +85,17 @@ class Expression:
 			coeff=coeff_map[fac][0]
 			real_factor=coeff_map[fac][1]
 			
-			#minus_flag=False
-			#if coeff<0:
-			#	minus_flag=True
 			to_term.append(Number(coeff))
 			if len(real_factor)>0:
 				to_term_ops.append('*')
 
 			for each_factor in real_factor:
-				#print type(each_factor)
 				if each_factor in ['*', '/']:
 					to_term_ops.append(each_factor)
 				else:
 					to_term.append(each_factor)
-			#if minus_flag==True:
-			#	_reduced.append('-')
 
 			if len(_reduced)>0:
-			#	if minus_flag==False:	
 					_reduced.append('+')
 	
 			_reduced.append(Term(to_term, to_term_ops))
@@ -182,24 +158,17 @@ class Expression:
 		return is_set
 
 	def getDerivativeBy(self, by_variable):
-		#print "expression derivativeby"
 		deri_terms=[]
 		deri_ops=[]
 		for term in self.expressions:
-			#deri_ops.append(term)
 			if term in ['+', '-']:
 				deri_ops.append(term)
 			else:
-				#print "now term in expressions : ", term
 				deri_term, deri_op = term.getDerivativeBy(by_variable)
-				#print deri_term, deri_op
 				for each_term in deri_term:				
 					deri_terms.append(each_term)
 				for each_op in deri_op:
 					deri_ops.append(each_op)
 			
-			#print "deri term : ", deri_terms
-			#print "deri ops  : ", deri_ops
-		
 		return Expression(deri_terms, deri_ops)
 

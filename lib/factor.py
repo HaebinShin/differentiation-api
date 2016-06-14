@@ -132,67 +132,6 @@ class Number(Factor):
 			return Number(token)
 
 
-class Negative(Factor):
-	def __init__(self, factor):
-		Factor.__init__(self, factor, factor.getType())
-		self.factor=factor
-
-	def getAnswer(self):
-		#print self.factor
-		if self.factor.getAnswer()==None:
-			return None
-		else:
-			return eval('-'+repr(self.factor.getAnswer()))
-
-	def __str__(self):
-		if self.factor.getVariables()!=None:
-			return "-%s" % self.factor
-		else:
-			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
-			return "-%s" % self.factor
-
-	def __repr__(self):
-		if self.factor.getVariables()!=None:
-			return "-%s" % self.factor
-		else:
-			#return "%s" % str(eval('-'+repr(self.factor.getAnswer())))
-			return "-%s" % self.factor
-	
-	def getBase(self):
-		#print self.factor.getType(), self.factor.getName()
-		if self.factor.getType()=="function" and (self.factor.getName()=="pow" or self.factor.getName()=="log"):
-			return self.factor.getBase()
-		return None
-	
-	def getExponential(self):
-		if self.factor.getType()=="function" and (self.factor.getName()=="pow" or self.factor.getName()=="log"):
-			return self.factor.getExponential()
-		return None
-
-	def getName(self):
-		return self.factor.getName()
-	
-	def getCoeff(self):
-		return self.factor.getCoeff()*-1
-
-	def getWithoutCoeffFactor(self):
-		return self.factor.getWithoutCoeffFactor()
-	
-	def toString(self):
-		return '-'+self.factor.toString()
-
-	def getVariables(self):
-		return self.factor.getVariables()
-
-	def setVariable(self, variable, value):
-		return self.factor.setVariable(variable, value)
-
-	def getDerivativeBy(self, by_variable=None):
-		#return eval('-'+str(self.factor.getDerivativeBy(by_variable)))
-		return Negative(self.factor.getDerivativeBy(by_variable))
-
-	def canonicalize(self):
-		return self.factors.canonicalize()
 
 class Paranthesis(Factor):
 	def __init__(self, expression):
@@ -221,14 +160,8 @@ class Paranthesis(Factor):
 		return self.expression.getDerivativeBy(by_variable)
 
 	def getWithoutCoeffFactor(self):
-		#wcf=self.expression.getWithoutCoeffFactor()
-		#if wcf!=False:
-		#	return wcf
-		#else:
-		#	return False
 		return self.expression
 
 	def getCoeff(self):
-		#return self.expression.getCoeff()
 		return 1
 

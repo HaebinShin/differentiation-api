@@ -11,14 +11,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sympy as sp
 import re
-#import latex2mathml as l2m
-#from numpy import arange
-#from sympy import latex, sympify, preview
 
 
 class Formula:
 	def __init__(self, expression):
-		#self.expression=[]
 		if type(expression)==str or type(expression)==unicode:
 			expression=str(expression)
 			
@@ -32,7 +28,6 @@ class Formula:
 		
 		self.expression=expression
 		self.variables=self.expression.getVariables()
-#		self.functions=functions
 
 		self.setted_variable=dict((var, None) for var in self.variables)
 
@@ -46,16 +41,10 @@ class Formula:
 		return self.expression
 
 	def getVariables(self):
-		#if self.variables==None:
-		#	return None
-		#else:
 		return list(self.variables)
 	
 	def getSettedVariables(self):
 		return self.setted_variable
-
-#	def getFunctions(self):
-#		return list(self.functions)
 
 	def getAnswer(self):
 		for variable in self.variables:
@@ -64,7 +53,6 @@ class Formula:
 		return self.expression.getAnswer()
 
 	def setVariable(self, variable, value):
-		#self.value[variable]=value
 		if self.expression.setVariable(variable, value)==True:	
 			self.setted_variable[variable]=value
 			return True
@@ -78,18 +66,10 @@ class Formula:
 			return True
 
 	def getDerivativeBy(self, by_variable):
-		#derivatives=[]
-		#if by_variable==None:
-		#	for variable in self.variable:
-		#		derivatives.append(self.tree.getDerivative(by_variable))
-		#else:
-		#return self.expression.getDerivativeBy(by_variable)
 		deri_expression=self.expression.getDerivativeBy(by_variable)
-		#print deri_expression
 		return Formula(deri_expression)
 
 	def isContinuous(self):
-		# f(a-alpha) similar f(a+alpha)
 		for variable in self.variables:
 			if self.__isInitVariable(variable)==False:
 				return "error - not initialize variable"
@@ -113,7 +93,6 @@ class Formula:
 					
 
 	def isDerivativable(self):
-		# f'(a-alpha) similar f'(a+alpha)
 		if self.expression.isContinuous()!=True:
 			return False
 
@@ -180,8 +159,6 @@ class Formula:
 			xs.append(x)
 			ys.append(y)
 		plt.plot(xs, ys)
-		#plt.axis([min_x,max_x,min_y,max_y])
-		#plt.axis([start,end,-3,3])
 		if max_y>max_y_limit:
 			max_y=max_y_limit
 		if min_y<min_y_limit:
@@ -193,8 +170,6 @@ class Formula:
 				
 	
 	def getLatexString(self):
-		#if file_name==None:
-		#	file_name='latex.png'
 		try:
 			st=self.toString()
 			print "st : ",st
@@ -204,47 +179,10 @@ class Formula:
 		except:
 			latex_string=""
 		return latex_string
-		#print "latex : ", latex_string
 		
-		#preview(r"$%s$" % latex_string, viewer='file', filename=file_name, euler=False)
-		#preview(sympify(self.toString()), output='png')
-		#plt.text(0,0,r"$%s$" % latex_string, fontsize=15)
-		#fig=plt.gca()
-		#fig.axes.get_xaxis().set_visible(False)
-		#fig.axes.get_yaxis().set_visible(False)
-		#plt.savefig(file_name)
-		#plt.close()
-		
-		#fig, ax = plt.subplots( nrows=1, ncols=1 )  # create figure & 1 axis
-		#ax.text(0,0,r"$%s$" % latex_string, fontsize=60)
-		#fig.savefig('latex.png')   # save the figure to file
-		#plt.close(fig)    # close the figure
-			
-#	def latex(self, file_name=None):
-		
-#		if file_name==None:
-#			file_name='latex.png'
-#		latex_string=latex(sympify(self.toString()))
-#		r = requests.get( 'http://latex.codecogs.com/png.latex?\dpi{300} \huge %s' % latex_string )
-#		f = open( file_name, 'wb' )
-#		f.write( r.content )
-#		f.close()
-
-#	def getMathML(self):
-#		latex_string=sp.latex(sp.sympify(self.toString()))
-#		math_ml=l2m.convert(latex_string)
-#		return math_ml
-
 
 if __name__ == "__main__":
 
-
-	#import re
-	#from functions import *
-	#from math import e, pi
-	#from vector import Vector
-	#from collections import Counter
-	#import ds
 
 	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
@@ -273,34 +211,27 @@ if __name__ == "__main__":
 
 	
 	print tokens
-#	print type(tokens)
 	p=Parser()
 	expr = p.parse(tokens)
 
 	formula=Formula(expr)
 	print formula
-	print "AASDFASDFSADFSDFSDFSFD", formula.toString()
 	print formula.setVariable("x", 0.5)
-	#print formula.setVariable("y", 3)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()
 	#formula.getPlotImage(-1.3,1.3, 'plot.png')
-	#formula.getLatex('latex.png')
-	#print formula.getMathML()
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
 
 	deri_formula = formula.getDerivativeBy('x')
 	print deri_formula
-	print "AASDFASDFSADFSDFSDFSFD", deri_formula.toString()
-#	print deri_formula.getSettedVariables()
-#	#print deri_formula.setVariable("x", 2)
-#	print deri_formula.setVariable("y", 3)
-#	print deri_formula.setVariable("z", 4)
+	#print deri_formula.getSettedVariables()
+	#print deri_formula.setVariable("x", 2)
+	#print deri_formula.setVariable("y", 3)
+	#print deri_formula.setVariable("z", 4)
 	print deri_formula.getAnswer()
 	#deri_formula.getPlotImage(-0.3, 0.3, 'deri_plot.png')
-	#deri_formula.getLatex('deri_latex.png')
 
 '''
 tker=Tokenizer()

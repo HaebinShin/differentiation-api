@@ -1,7 +1,6 @@
 def class_sort(class_list):
 	tostring_list=[]
 	for now in class_list:
-		#print now
 		tostring_list.append(str(now))
 	tostring_list.sort()
 
@@ -18,5 +17,4 @@ def class_sort(class_list):
 	for now in class_list:
 		toidx=tostring_list_idx[str(now)]
 		result[toidx]=now
-	#print "sort result : ", result
 	return result

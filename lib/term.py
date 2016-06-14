@@ -10,14 +10,12 @@ class Term:
 			
 		for i in range(len(self.factors)):
 			if self.factors[i].getType()=="function":
-				print "function reduce : ", self.factors[i]
 				if self.factors[i].getName()=="log":
 					if self.factors[i].getBase().getType()=="number" and self.factors[i].getExponential().getType()=="number" and str(self.factors[i].getBase().getAnswer())==str(self.factors[i].getExponential().getAnswer()):
 						self.factors[i]=Number(1)
 					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==1:
 						self.factors[i]=Number(0)
 				elif self.factors[i].getName()=="pow":
-					print self.factors[i].getBase()
 					if self.factors[i].getBase().getType()=="number" and self.factors[i].getBase().getAnswer()==0:
 						self.factors[i]=Number(0)
 					elif self.factors[i].getExponential().getType()=="number" and self.factors[i].getExponential().getAnswer()==0:
@@ -53,8 +51,6 @@ class Term:
 			reduced=[Number(0)]
 		else:
 			for i in range(len(ops)):
-				#if len(factors[i+1].getVariables())==0:
-					#print factors[i+1].getAnswer()
 				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:		# number 0
 					reduced=[Number(0)]
 					break
@@ -75,9 +71,7 @@ class Term:
 		divide_variable_map={}
 		last_operator='*'
 		coeff=1
-		#idx=0
 		for factor in reduced:
-			print "\tfactor", factor
 			if factor not in ['*', '/']:
 				if len(factor.getVariables())==0:	# number
 					if last_operator=='*':
@@ -92,7 +86,6 @@ class Term:
 						else:
 							multiply_variable_map[factor.toString()][0]+=1
 					else:
-						#divide_variable.append(factor)
 						exponential=divide_variable_map.get(factor.toString())
 						if exponential==None:
 							divide_variable_map[factor.toString()]=[1,factor]
@@ -100,7 +93,6 @@ class Term:
 							divide_variable_map[factor.toString()][0]+=1
 			else:
 				last_operator=factor
-			#idx+=1
 		
 		# abbrevi
 		for mval in multiply_variable_map.keys():
@@ -143,9 +135,6 @@ class Term:
 		if (len(multiply_variable)>0 and coeff==1)==False:
 			_reduced.append(Number(coeff))
 
-#		mul_idx=0
-#		div_idx=0
-#		ops_idx=0
 		self.only_factor_list=[]
 		for var in multiply_variable:
 			if len(_reduced)!=0:
@@ -205,7 +194,6 @@ class Term:
 		variables=set([])
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				#print factor
 				var=factor.getVariables()
 				if var!=None:
 					for now in var:
@@ -216,7 +204,6 @@ class Term:
 		is_set=False
 		for factor in self.terms:
 			if factor not in ['*', '/']:
-				#print "factor : ", factor
 				is_set |= factor.setVariable(variable, value)
 		return is_set
 
@@ -245,7 +232,6 @@ class Term:
 						deri_factors.append(func.Pow(self.factors[j+1], Number(-1)))
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
 			
-		#return Expression(deri_terms, deri_terms_ops)
 		print "deri_terms : ",deri_terms
 		print "deri_terms_ops : ",deri_terms_ops
 		return deri_terms, deri_terms_ops
