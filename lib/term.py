@@ -42,20 +42,25 @@ class Term:
 		reduced=[]
 
 		reduced.append(factors[0])
-		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:					# number 0
+		if len(factors[0].getVariables())==0 and eval(repr(factors[0].getAnswer()))==0:					
+			# number 0
 			reduced=[Number(0)]
 		else:
 			for i in range(len(ops)):
-				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:		# number 0
+				if ops[i]=='*' and len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==0:		
+					# number 0
 					reduced=[Number(0)]
 					break
-				elif ops[i]=='*' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==1:		# number 1
+				elif ops[i]=='*' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==1:		
+					# number 1
 					reduced.pop()
 					reduced.append(factors[i+1])
 					continue
-				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:					# (aa * 1) or (aa / 1)
+				elif len(factors[i+1].getVariables())==0 and eval(repr(factors[i+1].getAnswer()))==1:					
+					# (aa * 1) or (aa / 1)
 					continue
-				else:							# just push
+				else:							
+					# just push
 					reduced.append(ops[i])
 					reduced.append(factors[i+1])
 		return reduced
@@ -137,7 +142,8 @@ class Term:
 				_reduced.append('*')
 			if len(self.only_factor_list)!=0:
 				self.only_factor_list.append('*')
-			self.only_factor_list.append(func.Pow(var, Number(-1)))		# for avoid ambiguity coeff
+			self.only_factor_list.append(func.Pow(var, Number(-1)))		
+			# for avoid ambiguity coeff
 			_reduced.append(var)
 		return (_reduced, coeff)
 	

@@ -23,13 +23,16 @@ class Expression:
 		reduced=[]
 		reduced.append(terms[0])
 		for i in range(len(ops)):
-			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:		# zero in reduced
+			if ops[i]=='+' and len(reduced[-1].getVariables())==0 and eval(repr(reduced[-1].getAnswer()))==0:		
+				# zero in reduced
 				reduced.pop()
 				reduced.append(terms[i+1])
 				continue
-			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:						# zero now watching
+			elif len(terms[i+1].getVariables())==0 and eval(repr(terms[i+1].getAnswer()))==0:						
+				# zero now watching
 				continue
-			else:						# just push
+			else:						
+				# just push
 				reduced.append(ops[i])
 				reduced.append(terms[i+1])
 		return reduced
