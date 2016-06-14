@@ -136,8 +136,10 @@ class Formula:
 
 	def getPlotImage(self, start, end, file_name):
 
-		if ((type(eval(repr(start)))==int or type(eval(repr(start)))==float) and (type(eval(repr(end)))==int or type(eval(repr(end)))==float))==False:
-			raise InvalidPlotRange()
+		#if ((type(eval(repr(start)))==int or type(eval(repr(start)))==float) and (type(eval(repr(end)))==int or type(eval(repr(end)))==float))==False:
+		#print type(start), type(eval(repr(start)))
+		#if (Number.isNumber(start)==False or Number.isNumber(end)==False):
+		#	raise InvalidPlotRange()
 			
 
 		var_cnt=len(self.variables)

@@ -32,11 +32,15 @@ def index():
 			
 			
 			ranges=filter(None, re.split(r"[\s,]", plot_range))
-			if len(ranges)==2:
-				start=ranges[0]
-				end=ranges[1]
-			else:
+			try:
+				if len(ranges)==2:
+					start=int(ranges[0])
+					end=int(ranges[1])
+			except:
 				raise InvalidPlotRange()
+
+			#elif len(ranges)!=0:
+			#	raise InvalidPlotRange()
 			print "ranges : ", ranges
 
 

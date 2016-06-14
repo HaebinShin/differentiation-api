@@ -26,15 +26,10 @@ class Term:
 
 		self.terms=[]
 
-		print "\tnow terms : ", reduced
-
 		_reduced, coeff=self.__reduceCoeff(reduced)
 		self.terms=_reduced
 		self.coeff=coeff	
 						
-		print "\t_reduced : ", self.terms
-		print "\tcoeff : ", coeff
-
 
 	def __str__(self):
 		return "%s" % self.terms
