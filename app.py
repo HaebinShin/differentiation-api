@@ -54,12 +54,17 @@ def index():
 			os.system('rm static/*.png 2>/dev/null')
 	
 			
-			df_list=[]
+			df_list={}
+			var_list=[]
 			if len(f.getVariables())==0:
-				df_list.append(f.getDerivativeBy("None"))
+				#df_list.append(f.getDerivativeBy("None"))
+				var_list.append('constant')
+				df_list['constant']=f.getDerivativeBy('None')
 			for var in f.getVariables():
+				var_list.append(var)
 				df=f.getDerivativeBy(var)
-				df_list.append(df)
+				#df_list.append(df)
+				df_list[str(var)]=df
 
 			plot=None
 			deri_plot=None
@@ -68,7 +73,7 @@ def index():
 				if plot==True:
 					os.system('mv plot.png static/ 2>/dev/null')
 				if len(df_list)==1:
-					deri_plot=df_list[0].getPlotImage(start,end,'deri_plot.png')
+					deri_plot=df_list[var_list[0]].getPlotImage(start,end,'deri_plot.png')
 					if deri_plot==True:
 						os.system('mv deri_plot.png static/ 2>/dev/null')
 			

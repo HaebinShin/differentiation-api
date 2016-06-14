@@ -3,14 +3,6 @@
 		<div class='panel-heading'>
 			<h3 class='panel-title'>String</h3>
 		</div>
-		<!--<div class='panel-body'>
-			<div><label>Original :</label></div>
-			{{ formula.toString() }}
-			<div><label>Derivative :</label></div>
-			{% for now_formula in deri_formulas %}
-			<p>{{ now_formula.toString() }}</p>
-			{% endfor %}
-		</div>-->
 		<ul class='list-group'>
 			<li class='list-group-item'>
 				<div><label>Original :</label></div>
@@ -20,9 +12,9 @@
 			</li>
 			<li class='list-group-item'>	
 				<div><label>Derivative :</label></div>
-				{% for now_formula in deri_formulas %}
+				{% for var in deri_formulas.keys() %}
 				<div class='list-group-item-result'>
-					{{ now_formula.toString() }}
+					df/d({{ var }}) : {{ deri_formulas[var].toString() }}
 				</div>
 				{% endfor %}
 			</li>
@@ -42,9 +34,9 @@
 			<li class='list-group-item'>
 				<div><label>Derivative :</label></div>
 				<div class='list-group-item-result'>
-					{% for now_formula in deri_formulas %}
+					{% for var in deri_formulas.keys() %}
 					<div class='latex'>
-						{{ now_formula.getLatexString() }}
+						df/d({{ var }}) : {{ deri_formulas[var].getLatexString() }}
 					</div>
 					{% endfor %}
 				</div>
