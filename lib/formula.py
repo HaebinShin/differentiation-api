@@ -158,11 +158,17 @@ class Formula:
 			min_y=min(min_y, y)
 			xs.append(x)
 			ys.append(y)
+		maxy=max_y
+		miny=min_y
+
 		plt.plot(xs, ys)
 		if max_y>max_y_limit:
 			max_y=max_y_limit
 		if min_y<min_y_limit:
 			min_y=min_y_limit
+		if min_y>max_y:
+			max_y=maxy
+			min_y=miny
 		plt.ylim(min_y, max_y)
 		plt.savefig(file_name)
 		plt.close()
@@ -172,9 +178,7 @@ class Formula:
 	def getLatexString(self):
 		try:
 			st=self.toString()
-			print "st : ",st
 			re_st=re.sub(r"log\((?P<base>[^,;]+),{1}(?P<exponent>.*)\)", r"log(\g<exponent>,\g<base>)", st)
-			print "re : ",re_st
 			latex_string=sp.latex(sp.sympify(re_st))
 		except:
 			latex_string=""

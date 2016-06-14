@@ -103,7 +103,7 @@ class Term:
 
 
 
-		# reduce same factor by pow()
+		# x*x -> pow(x,2)
 		multiply_variable=[]
 		divide_variable=[]
 		for var in multiply_variable_map.keys():
@@ -122,14 +122,8 @@ class Term:
 				divide_variable.append(real_factor)
 
 
-		print "\tmultiply_var", multiply_variable
 		multiply_variable=ds.class_sort(multiply_variable)
 		divide_variable=ds.class_sort(divide_variable)
-
-		print "\tin term coeff : ", coeff
-		print "\tmultiply_variable : ", multiply_variable
-		print "\tdivide_variable : ", divide_variable
-
 
 		_reduced=[]
 		if (len(multiply_variable)>0 and coeff==1)==False:
@@ -160,7 +154,6 @@ class Term:
 		if len(self.only_factor_list)==0:		# constant
 			return self.coeff
 		else:
-			print "\t\tfactor coeff 1 : ", self.terms[0]
 			return self.terms[0].getCoeff()		# 2*x*y, x*y
 
 
@@ -232,7 +225,5 @@ class Term:
 						deri_factors.append(func.Pow(self.factors[j+1], Number(-1)))
 			deri_terms.append(Term(deri_factors, deri_factors_ops))
 			
-		print "deri_terms : ",deri_terms
-		print "deri_terms_ops : ",deri_terms_ops
 		return deri_terms, deri_terms_ops
 

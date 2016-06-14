@@ -7,11 +7,8 @@ class Expression:
 		self.expressions=[]
 
 		reduced=self.__reduceZero(terms, ops)
-		print "reduced : ", reduced
 		_reduced=self.__reduceCoeff(reduced)
-		
 		self.expressions=_reduced
-		print "expressions : ", self.expressions
 
 
 	def __str__(self):
@@ -41,14 +38,11 @@ class Expression:
 	def __reduceCoeff(self, reduced):
 		coeff_map={}
 		last_operator='+'
+		# x+x -> coeff_map[x]=2
 		for term in reduced:
-			print "expressions term : ", term
 			if term not in ['+', '-']:
 				coeff=term.getCoeff()
 				without_coeff_factor=term.getWithoutCoeffFactor()
-				print "term : ",term
-				print "term coeff : ",coeff
-				print "term without coeff factor : ", without_coeff_factor
 				without_coeff_factor_term=None
 				facs=[]
 				ops=[]
@@ -71,14 +65,11 @@ class Expression:
 			else:
 				last_operator=term
 
-
-		print "coeff_map : ", coeff_map	
-		
-
 		faclist=coeff_map.keys()
 		faclist=ds.class_sort(faclist)
 		_reduced=[]
 
+		# coeff_map[x*y*z]=2 -> 2*x*y*z
 		for fac in faclist:
 			to_term=[]
 			to_term_ops=[]
@@ -88,7 +79,7 @@ class Expression:
 			to_term.append(Number(coeff))
 			if len(real_factor)>0:
 				to_term_ops.append('*')
-
+			# x*y*z 
 			for each_factor in real_factor:
 				if each_factor in ['*', '/']:
 					to_term_ops.append(each_factor)

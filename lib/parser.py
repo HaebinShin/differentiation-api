@@ -6,8 +6,6 @@ from exception import InvalidFormula
 class Parser:
 	def __init__(self):
 		self.tree=[]
-		#self.variables=set([])
-		#self.variables={}
 		self.functions=set([])
 
 	def __str__(self):
@@ -18,7 +16,6 @@ class Parser:
 	
 	def parse(self, tokens):
 		self.tree=self.takeExpression(tokens)
-		#return Ast(self.tree, self.functions)
 		return self.tree
 	
 	def takeExpression(self, tokens):
@@ -56,21 +53,16 @@ class Parser:
 				tokens.popFront()
 			except IndexError:
 				raise InvalidFormula()
-			#return Factor(['(',exp,')'],"paranthesis")
-			#return exp	
 			return Paranthesis(exp)
-		#elif re.match("sin|cos|tan|log|exp", now)!=None:
 		elif Function.isSingleParamFunction(now)==True:
 			try:
 				self.functions.add(now)
 				tokens.popFront()
 				lparan=tokens.popFront()
-				#print tokens.front()
 				exp = self.takeExpression(tokens)
 				rparan=tokens.popFront()
 				if (lparan=='(' and rparan==')')==False:
 					raise InvalidFormula()
-				#return Factor([now, '(', exp, ')'], "function")
 			except IndexError:
 				raise InvalidFormula()
 			return Function.determine(now, param=exp)
@@ -79,10 +71,8 @@ class Parser:
 				self.functions.add(now)
 				tokens.popFront()
 				lparan=tokens.popFront()	
-				#print "tokens front : ", tokens.front()
 				exp1 = self.takeExpression(tokens)
 				tokens.popFront()
-				#print "tokens front : ", tokens.front()
 				exp2 = self.takeExpression(tokens)
 				rparan=tokens.popFront()
 				if (lparan=='(' and rparan==')')==False:
@@ -90,29 +80,20 @@ class Parser:
 			except IndexError:
 				raise InvalidFormula()
 			return Function.determine(now, base=exp1, exponential=exp2)
-		#elif re.match("\d*\.\d+|\d+", now)!=None:
 		elif Number.isNumber(now)==True:
 			tokens.popFront()
-			#return Factor(now, "number")
-			#return Number(now)
 			return Number.determine(now)
 		elif now == '-':
 			try:
 				tokens.popFront()
-				#fac = tokens.front()
 				fac = self.takeFactor(tokens)
-				#tokens.popFront()
-				#return Factor(['-',fac], "negative")
-				#return Negative(fac)
 				term=Term([Number(-1),fac],['*'])
 				expr=Expression([term],[])
 			except IndexError:
 				raise InvalidFormula()
 			return Paranthesis(expr)
 		elif Variable.isVariable(now)==True:
-			#self.variables.add(now)
 			tokens.popFront()
-			#return Factor(now, "variable")
 			return Variable(now)
 		else:
 			raise InvalidFormula()
