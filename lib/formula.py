@@ -136,12 +136,6 @@ class Formula:
 
 	def getPlotImage(self, start, end, file_name):
 
-		#if ((type(eval(repr(start)))==int or type(eval(repr(start)))==float) and (type(eval(repr(end)))==int or type(eval(repr(end)))==float))==False:
-		#print type(start), type(eval(repr(start)))
-		#if (Number.isNumber(start)==False or Number.isNumber(end)==False):
-		#	raise InvalidPlotRange()
-			
-
 		var_cnt=len(self.variables)
 		xs=[]
 		ys=[]
@@ -190,7 +184,6 @@ class Formula:
 if __name__ == "__main__":
 
 
-	#import pdb; pdb.set_trace()
 	tker=Tokenizer()
 	tokens=tker.tokenize("pow(x,-1)")
 	#tokens=tker.tokenize("sin(x,x)")
@@ -239,36 +232,3 @@ if __name__ == "__main__":
 	print deri_formula.getAnswer()
 	#deri_formula.getPlotImage(-0.3, 0.3, 'deri_plot.png')
 
-'''
-tker=Tokenizer()
-tokens=tker.tokenize(input)
-
-p=Parser()
-expr=p.parse(tokens)
-
-ast=Ast("asdfasdf")
-
-ast=Ast(expr)
-ast.getVariables("x", 2)
-ast.getVariables("y", 2)
-ast.getAnswer()
-
-c = Calculator()
-c.isContinue(expr, Coordinate)
-c.isDifferential(expr, Coordinate)
-c.getDerivativeBy(expr, variable)
-c.getAnswer(expr, Coordinate)
-c.getGradient(expr)
-
-
-f=Formula("asfd")
-f.isValid()
-f.notation()
-f.canonicalize()
-f.getAnswer(Coordinate)
-(Formula type)deri_formula==f.getDerivativeBy(variable)
-f.getGradient()
-
-
-
-'''
