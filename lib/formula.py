@@ -4,7 +4,7 @@ from vector import Vector
 from expression import Expression
 from term import Term
 from factor import Number, Paranthesis
-from exception import InvalidPlotRange, InvalidVectorInput
+from exception import InvalidPlotRange, InvalidVectorInput, ImaginaryValue
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -100,7 +100,11 @@ class Formula:
 		for variable in self.variables:
 			derivate=self.expression.getDerivativeBy(variable)
 			derivate.setVariable(variable, self.setted_variable[variable])
-			result&=derivate.isContinue()
+			try:
+				val=derivate.getAnswer()
+				result=True
+			except:
+				result=False
 		return result
 			
 
@@ -149,11 +153,14 @@ class Formula:
 		for x in np.arange(start, end, 0.02):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
-			y=self.getAnswer()
-			max_y=max(max_y, y)
-			min_y=min(min_y, y)
-			xs.append(x)
-			ys.append(y)
+			try:
+				y=self.getAnswer()
+				max_y=max(max_y, y)
+				min_y=min(min_y, y)
+				xs.append(x)
+				ys.append(y)
+			except ImaginaryValue:
+				pass
 		maxy=max_y
 		miny=min_y
 
