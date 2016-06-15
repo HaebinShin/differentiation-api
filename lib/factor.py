@@ -63,7 +63,6 @@ class Variable(Factor):
 	def isVariable(token):
 		special=Regex.special()
 		if special.match(token)==None:
-			print token
 			return True
 		else:
 			return False

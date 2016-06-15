@@ -19,3 +19,7 @@ class InvalidPlotRange(Error):
 class InvalidVectorInput(Error):
 	def __str__(self):
 		return "Invalid Vector"
+
+class ImaginaryValue(Error):
+	def __str__(self):
+		return "value is imaginary part"

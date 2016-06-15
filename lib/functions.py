@@ -3,7 +3,7 @@ from regex import Regex
 from factor import *
 from term import Term
 from expression import Expression
-from exception import NotSupportFormula
+from exception import NotSupportFormula, ImaginaryValue
 
 class Function(Factor):
 	def __init__(self, name=None, param=None, base=None, exponential=None):
@@ -118,6 +118,7 @@ class Sin(Function):
 
 	def getAnswer(self):
 		try:
+			print "asdf",self.param.getAnswer()
 			return sin(self.param.getAnswer())
 		except ZeroDivisionError:
 			return 1e10
@@ -150,9 +151,7 @@ class Cos(Function):
 		ops.append('*')
 		factors.append(Paranthesis(self.param.getDerivativeBy(by_variable)))
 		aa=Paranthesis(self.param.getDerivativeBy(by_variable))
-		print "asdf",aa 
 		a=Paranthesis(Expression([Term(factors,ops)], []))
-		print "asdf ",a
 		return Paranthesis(Expression([Term(factors,ops)], []))
 
 class Tan(Function):
@@ -262,6 +261,8 @@ class Log(Function):
 		try:
 			if self.exponential.getAnswer()>0:
 				return log(self.exponential.getAnswer(), self.base.getAnswer())
+			else:
+				raise ImaginaryValue()
 		except ZeroDivisionError:
 			return 1e10
 
@@ -288,7 +289,6 @@ class Pow(Function):
 
 	def getAnswer(self):
 		try:
-			print self.base.getAnswer(), self.exponential.getAnswer()
 			return pow(self.base.getAnswer(), self.exponential.getAnswer())
 		except ZeroDivisionError:
 			return 1e10
