@@ -21,34 +21,12 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<script src="/static/js/jquery.jslatex.packed.js"></script>
-
+	<script src="/static/js/load_image.js"></script>	
+	<script src="/static/js/vector_range_commu.js"></script>
 	<script type=text/javascript>
- 		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-		$(function() {
-			$('button#vector_input').bind('click', function() {
-				$.getJSON($SCRIPT_ROOT + '/_vector_input', {
-					vector: $('input[name="vector"]').val()
-				}, function(data) {
-					$("#dir_deri").text(data.dir_deri);
-				});
-				return false;
-			});
-			$('#range_input').bind('click', function() {
-				$.getJSON($SCRIPT_ROOT + '/_range_input', {
-					start: $('input[name="start"]').val(),
-					end: $('input[name="end"]').val()
-				}, function(data) {
-					loadImg('plot', '/static/plot.png?')
-					loadImg('deri_plot', '/static/deri_plot.png?')
-				});
-				return false;
-			});
-
-		});
-		function loadImg(id, src){
-			src_time=src+(new Date()).getTime();
-			$('#'+id).attr('src', src_time)
-		}
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+	<script type=text/javascript>	
 		$(function () {
 			$(".latex").latex();
 		});

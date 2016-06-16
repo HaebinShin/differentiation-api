@@ -68,15 +68,6 @@
 					<div class="col-xs-2">
 						<label>Range Input :</label>
 					</div>
-				<!--	<div class="col-xs-2">
-        					<input type="number" class="form-control input-sm" name='start' placeholder="start">
-					</div>
-					<div class="col-xs-2">
-        					<input type="number" class="form-control input-sm" name='end' placeholder="end">
-					</div>
-					<div class='col-xs-2'>
-						<button type='submit' class="btn btn-default center-block" id="range_input">Zoom</button>
-					</div>-->
 					<div class="col-xs-4">
 						<div class="input-group input-group-sm">
         						<input type="number" class="form-control" name='start' placeholder="start">
@@ -95,7 +86,7 @@
 			</li>
 			<li class='list-group-item'>
 				<div><label>Original :</label></div>
-				{% if plot!=None %}
+				{% if is_ploted==True %}
 				<div><script>
 					src='/static/plot.png?'+(new Date()).getTime();
 					document.write("<img src="+src+" width=500px height=400px id='plot'>");
@@ -104,7 +95,7 @@
 			</li>
 			<li class='list-group-item'>
 				<div><label>Derivative :</label></div>
-				{% if deri_plot!=None %}
+				{% if is_deri_ploted==True %}
 				<div><script>
 					d_src='/static/deri_plot.png?'+(new Date()).getTime();
 					document.write("<img src="+d_src+" width=500px height=400px id='deri_plot'>");
