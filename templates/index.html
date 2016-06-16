@@ -10,6 +10,9 @@
 		<div class="container">
 				{% include 'header_form.html' %}
 				{% if formula_input %}
+					{% include 'input.html' %}
+				{% endif %}
+				{% if formula %}
 					{% include 'result.html' %}
 				{% endif %}
 				{% if error %}

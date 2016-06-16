@@ -118,7 +118,6 @@ class Sin(Function):
 
 	def getAnswer(self):
 		try:
-			print "asdf",self.param.getAnswer()
 			return sin(self.param.getAnswer())
 		except ZeroDivisionError:
 			return 1e10

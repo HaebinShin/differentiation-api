@@ -77,8 +77,8 @@ class Formula:
 				return "error - not initialize variable"
 
 		mid=self.expression.getAnswer()
-		alpha=float(0.001)
-		tolerance=float(0.00000000001)
+		alpha=float(0.00000001)
+		tolerance=float(0.0000001)
 
 		result=True
 		for variable in self.variables:
@@ -148,17 +148,28 @@ class Formula:
 		max_y=1e-20
 		min_y=1e20
 
-		max_y_limit=500
-		min_y_limit=-500
+		max_y_limit=1000
+		min_y_limit=-1000
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in np.arange(start, end, math.pi/200):
+		for x in np.arange(start, end, math.pi/2000):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			try:
-				y=self.getAnswer()
-				max_y=max(max_y, y)
-				min_y=min(min_y, y)
+				saved_setting=self.setted_variable
+				variables=self.getVariables()
+				variable=variables[0]
+				self.setVariable(variable, x)
+
+				is_continue=self.isContinuous()
+				print is_continue
+				if is_continue==True:
+					y=self.getAnswer()
+					print x, y
+					max_y=max(max_y, y)
+					min_y=min(min_y, y)
+				else:
+					y=np.nan
 				xs.append(x)
 				ys.append(y)
 			except ImaginaryValue:
@@ -176,7 +187,8 @@ class Formula:
 		if min_y>max_y:
 			max_y=maxy
 			min_y=miny
-		plt.ylim(min_y, max_y)
+	#	print miny, maxy
+		#plt.ylim(min_y, max_y)
 		plt.savefig(file_name)
 		plt.close()
 		return True

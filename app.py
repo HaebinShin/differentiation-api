@@ -19,7 +19,7 @@ def index():
 			global f
 			f=Formula(formula_input)
 
-			start=-1*math.pi
+			start=-math.pi
 			end=math.pi
 			
 			os.system('rm static/*.png 2>/dev/null')
