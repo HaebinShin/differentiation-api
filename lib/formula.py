@@ -9,8 +9,10 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.ma as m
 import sympy as sp
 import re
+import math
 
 
 class Formula:
@@ -150,7 +152,7 @@ class Formula:
 		min_y_limit=-500
 		if var_cnt>1:
 			return "error - it's not one variable function"
-		for x in np.arange(start, end, 0.02):
+		for x in np.arange(start, end, math.pi/200):
 			if var_cnt==1 and self.setVariable(self.variables[0], x)==False:
 				return "error"
 			try:
@@ -164,6 +166,8 @@ class Formula:
 		maxy=max_y
 		miny=min_y
 
+
+		
 		plt.plot(xs, ys)
 		if max_y>max_y_limit:
 			max_y=max_y_limit
@@ -192,7 +196,7 @@ if __name__ == "__main__":
 
 
 	tker=Tokenizer()
-	tokens=tker.tokenize("pow(x,-1)")
+	tokens=tker.tokenize("x+y")
 	#tokens=tker.tokenize("sin(x,x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
@@ -222,6 +226,7 @@ if __name__ == "__main__":
 
 	formula=Formula(expr)
 	print formula
+	print formula.getVariables()
 	print formula.setVariable("x", 0.5)
 	print formula.setVariable("z", 4)
 	print formula.getAnswer()

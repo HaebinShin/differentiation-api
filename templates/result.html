@@ -1,3 +1,18 @@
+<div class="row" style="margin-top: 40px">
+	<div class='panel panel-default'>
+		<div class='panel-heading'>
+			<h3 class='panel-title'>Input</h3>
+		</div>
+		<li class='list-group-item'>	
+			<div><label>Formula Input :</label></div>
+			<div class='list-group-item-result'>
+			{% if formula_input %}
+				{{ formula_input }}
+			{% endif %}
+			</div>
+		</li>
+	</div>
+</div>
 <div class="row">
 	<div class='panel panel-success'>
 		<div class='panel-heading'>
@@ -49,11 +64,41 @@
 		</div>
 		<ul class='list-group'>
 			<li class='list-group-item'>
+				<div class='row'>
+					<div class="col-xs-2">
+						<label>Range Input :</label>
+					</div>
+				<!--	<div class="col-xs-2">
+        					<input type="number" class="form-control input-sm" name='start' placeholder="start">
+					</div>
+					<div class="col-xs-2">
+        					<input type="number" class="form-control input-sm" name='end' placeholder="end">
+					</div>
+					<div class='col-xs-2'>
+						<button type='submit' class="btn btn-default center-block" id="range_input">Zoom</button>
+					</div>-->
+					<div class="col-xs-4">
+						<div class="input-group input-group-sm">
+        						<input type="number" class="form-control" name='start' placeholder="start">
+							<span class="input-group-btn" style="width:0px;"></span>
+
+
+        						<input type="number" class="form-control" name='end' placeholder="end">
+							<span class="input-group-btn">
+								<button type='submit' class="btn btn-default center-block" id="range_input"><i class="glyphicon glyphicon-search"></i></button>
+							</span>
+						</div>
+					</div>
+
+				</div>
+				
+			</li>
+			<li class='list-group-item'>
 				<div><label>Original :</label></div>
 				{% if plot!=None %}
 				<div><script>
 					src='/static/plot.png?'+(new Date()).getTime();
-					document.write("<img src="+src+" width=500px height=400px>");
+					document.write("<img src="+src+" width=500px height=400px id='plot'>");
 				</script></div>
 				{% endif %}
 			</li>
@@ -62,7 +107,7 @@
 				{% if deri_plot!=None %}
 				<div><script>
 					d_src='/static/deri_plot.png?'+(new Date()).getTime();
-					document.write("<img src="+d_src+" width=500px height=400px>");
+					document.write("<img src="+d_src+" width=500px height=400px id='deri_plot'>");
 				</script></div>
 				{% endif %}
 			</li>
@@ -82,11 +127,39 @@
 	<div class='panel panel-success'>
 		<div class='panel-heading'>
 			<h3 class='panel-title'>Directional Derivative</h3>
+			
+			
 		</div>
 		<div class='panel-body'>
-			<span> < </span>
-			{{ dir_deri }}
-			<span> > </span>
+			<div><label>Vector Input :</label></div>
+			
+			<div class="col-xs-2">
+				<span><label> < </label></span>
+				{% for var in deri_formulas.keys() %}
+				<span><label>{{ var }} <label></span>
+				{% endfor %}
+				<span><label> > :</label></span>
+			</div>
+ 			<div class="col-xs-6">
+				<div class="input-group input-group-sm">
+        				<input type="text" class="form-control" name='vector' placeholder="value1 value2 ...">
+					<span class="input-group-btn">
+						<button type='submit' class="btn btn-default center-block" id="vector_input"><i class="glyphicon glyphicon-search"></i></button>
+					</span>
+				</div>
+      			</div>
+			
+			
 		</div>
+		<ul class='list-group'>
+			<li class='list-group-item'>
+				<div><label>Result :</label></div>
+				<div class="list-group-item-result">
+					<span> < </span>
+					<span id="dir_deri"></span>
+					<span> > </span>
+				</div>
+			</li>		
+		</ul>
 	</div>
 </div>

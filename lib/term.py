@@ -192,7 +192,9 @@ class Term:
 				if var!=None:
 					for now in var:
 						variables.add(now)
-		return list(variables)
+		var_list=list(variables)
+		var_list.sort()
+		return var_list
 
 	def setVariable(self, variable, value):
 		is_set=False
