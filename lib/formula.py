@@ -157,15 +157,16 @@ class Formula:
 				return "error"
 			try:
 				saved_setting=self.setted_variable
-				variables=self.getVariables()
-				variable=variables[0]
+				variables=self.variables
+				if len(variables)>0:
+					variable=variables[0]
+				else:
+					variable="constant"
 				self.setVariable(variable, x)
 
 				is_continue=self.isContinuous()
-				print is_continue
 				if is_continue==True:
 					y=self.getAnswer()
-					print x, y
 					max_y=max(max_y, y)
 					min_y=min(min_y, y)
 				else:
