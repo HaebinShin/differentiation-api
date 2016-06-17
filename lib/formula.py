@@ -148,8 +148,8 @@ class Formula:
 		max_y=1e-20
 		min_y=1e20
 
-		max_y_limit=1000
-		min_y_limit=-1000
+	#	max_y_limit=1000
+	#	min_y_limit=-1000
 		if var_cnt>1:
 			return "error - it's not one variable function"
 		for x in np.arange(start, end, math.pi/2000):
@@ -175,20 +175,21 @@ class Formula:
 				ys.append(y)
 			except ImaginaryValue:
 				pass
-		maxy=max_y
-		miny=min_y
+	#	maxy=max_y
+	#	miny=min_y
 
 
 		
 		plt.plot(xs, ys)
-		if max_y>max_y_limit:
-			max_y=max_y_limit
-		if min_y<min_y_limit:
-			min_y=min_y_limit
-		if min_y>max_y:
-			max_y=maxy
-			min_y=miny
-	#	print miny, maxy
+	#	if max_y>max_y_limit:
+	#		max_y=max_y_limit
+	#	if min_y<min_y_limit:
+	#		min_y=min_y_limit
+	#	if min_y>max_y:
+	#		max_y=maxy
+	#		min_y=miny
+		if max_y-min_y<1e-7:
+			plt.ylim(min_y-10, max_y+10)
 		#plt.ylim(min_y, max_y)
 		plt.savefig(file_name)
 		plt.close()
