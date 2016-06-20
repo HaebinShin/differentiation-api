@@ -30,6 +30,7 @@ class Formula:
 		
 		self.expression=expression
 		self.variables=self.expression.getVariables()
+		self.variables.sort()
 
 		self.setted_variable=dict((var, None) for var in self.variables)
 

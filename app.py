@@ -4,6 +4,7 @@ from lib.vector import Vector
 from lib.exception import *
 import os
 import re
+from collections import OrderedDict
 
 import math
 
@@ -35,6 +36,7 @@ def index():
 				var_list.append(var)
 				df=f.getDerivativeBy(var)
 				df_list[str(var)]=df
+			df_list=OrderedDict(sorted(df_list.items()))
 
 			is_ploted=False
 			is_deri_ploted=False
