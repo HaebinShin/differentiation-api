@@ -4,6 +4,7 @@ from factor import *
 from term import Term
 from expression import Expression
 from exception import NotSupportFormula, ImaginaryValue
+import numpy as np
 
 class Function(Factor):
 	def __init__(self, name=None, param=None, base=None, exponential=None):
@@ -120,7 +121,7 @@ class Sin(Function):
 		try:
 			return sin(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -139,7 +140,7 @@ class Cos(Function):
 		try:
 			return cos(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -161,7 +162,7 @@ class Tan(Function):
 		try:
 			return tan(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -179,7 +180,7 @@ class Csc(Function):
 		try:
 			return 1.0/sin(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -201,7 +202,7 @@ class Sec(Function):
 		try:
 			return 1.0/cos(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -221,7 +222,7 @@ class Cot(Function):
 		try:
 			return 1.0/tan(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -241,7 +242,7 @@ class Exp(Function):
 		try:
 			return exp(self.param.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 	
 	def getDerivativeBy(self, by_variable):
 		factors=[]
@@ -263,7 +264,7 @@ class Log(Function):
 			else:
 				raise ImaginaryValue()
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 
 	def setVariable(self, variable, value):
 		return (self.base.setVariable(variable, value) | self.exponential.setVariable(variable, value))
@@ -288,9 +289,12 @@ class Pow(Function):
 
 	def getAnswer(self):
 		try:
+			base_ans=self.base.getAnswer()
+			expo_ans=self.exponential.getAnswer()
+
 			return pow(self.base.getAnswer(), self.exponential.getAnswer())
 		except ZeroDivisionError:
-			return 1e10
+			return np.inf
 		except ValueError:
 			return 0
 

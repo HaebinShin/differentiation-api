@@ -96,7 +96,7 @@ class Formula:
 					
 
 	def isDerivativable(self):
-		if self.expression.isContinuous()!=True:
+		if self.isContinuous()!=True:
 			return False
 
 		result=True
@@ -105,6 +105,7 @@ class Formula:
 			derivate.setVariable(variable, self.setted_variable[variable])
 			try:
 				val=derivate.getAnswer()
+				print val
 				result=True
 			except:
 				result=False
@@ -211,7 +212,8 @@ if __name__ == "__main__":
 
 
 	tker=Tokenizer()
-	tokens=tker.tokenize("x+y")
+	#tokens=tker.tokenize("pow(pow(x,2),0.5)")
+	tokens=tker.tokenize("tan(x)")
 	#tokens=tker.tokenize("sin(x,x)")
 	#tokens=tker.tokenize("x+sin(x+cos(x))+(x+x)+z*(x)*(y)")
 	#tokens=tker.tokenize("x+cos(x)")
@@ -240,22 +242,23 @@ if __name__ == "__main__":
 	expr = p.parse(tokens)
 
 	formula=Formula(expr)
-	print formula
-	print formula.getVariables()
-	print formula.setVariable("x", 0.5)
-	print formula.setVariable("z", 4)
-	print formula.getAnswer()
+	#print formula
+	#print formula.getVariables()
+	print formula.setVariable("x", math.pi/2)
+	print "asf", formula.isDerivativable()
+	#print formula.setVariable("z", 4)
+	#print formula.getAnswer()
 	#formula.getPlotImage(-1.3,1.3, 'plot.png')
 	#print formula.isContinuous()
 	#print formula.getGradient()
 	#print formula.getDirectionalDerivative(Vector(3,4))
 
-	deri_formula = formula.getDerivativeBy('x')
-	print deri_formula
+	#deri_formula = formula.getDerivativeBy('x')
+	#print deri_formula
 	#print deri_formula.getSettedVariables()
 	#print deri_formula.setVariable("x", 2)
 	#print deri_formula.setVariable("y", 3)
 	#print deri_formula.setVariable("z", 4)
-	print deri_formula.getAnswer()
+	#print deri_formula.getAnswer()
 	#deri_formula.getPlotImage(-0.3, 0.3, 'deri_plot.png')
 
